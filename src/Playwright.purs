@@ -28,13 +28,15 @@ module Playwright
     , env
     , devtools
     , slowMo
+
+    , close
     )
 where
 
 import Prelude
 import Effect (Effect)
 import Control.Promise (Promise, toAffE)
-import Data.Options (Option, Options, opt)
+import Data.Options (Option, Options, opt, options)
 import Effect.Aff (Aff)
 import Foreign (Foreign)
 import Foreign.Object (Object)
@@ -46,10 +48,10 @@ foreign import firefox :: BrowserType
 foreign import chromium :: BrowserType
 foreign import webkit :: BrowserType
 
-foreign import _launch :: BrowserType -> Options LaunchOptions -> Effect (Promise Browser)
+foreign import _launch :: BrowserType -> Foreign -> Effect (Promise Browser)
 
 launch :: BrowserType -> Options LaunchOptions -> Aff Browser
-launch bt = toAffE <<< _launch bt
+launch bt opts = toAffE $ _launch bt (options opts)
 
 foreign import data LaunchOptions :: Type
 
@@ -111,3 +113,8 @@ devtools = opt "devtools"
 
 slowMo :: Option LaunchOptions Number
 slowMo = opt "slowMo"
+
+close :: Browser -> Aff Unit
+close = toAffE <<< _close
+
+foreign import _close :: Browser -> Effect (Promise Unit)

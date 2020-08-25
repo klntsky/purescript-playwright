@@ -12,3 +12,9 @@ exports._launch = function (browser) {
         };
     };
 };
+
+exports._close = function (browser) {
+    return function () {
+        return browser.close();
+    };
+};
