@@ -1,0 +1,32 @@
+{
+  "name": "purescript-playwright",
+  "version": "0.0.1",
+  "description": "PureScript bindings for Playwright",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "bower": "^1.8.8",
+    "playwright": "^1.3.0",
+    "pulp": "^15.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "pulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/klntsky/purescript-playwright.git"
+  },
+  "keywords": [
+    "purescript",
+    "playwright"
+  ],
+  "author": "Vladimir Kalnitsky <klntsky@gmail.com>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/klntsky/purescript-playwright/issues"
+  },
+  "homepage": "https://github.com/klntsky/purescript-playwright#readme"
+}
