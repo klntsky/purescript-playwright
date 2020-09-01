@@ -29,7 +29,20 @@ module Playwright
     , devtools
     , slowMo
 
+    , class Close
     , close
+
+    , class NewPage
+    , newPage
+    , NewpageOptions
+
+    , Frame
+    , ElementHandle
+    , Page
+
+    , class Query
+    , query
+    , queryMany
     )
 where
 
@@ -114,14 +127,22 @@ devtools = opt "devtools"
 slowMo :: Option LaunchOptions Number
 slowMo = opt "slowMo"
 
-close :: Browser -> Aff Unit
+class Close sth
+
+instance closeBrowser :: Close Browser
+
+close :: forall sth. Close sth => sth -> Aff Unit
 close = toAffE <<< _close
 
-foreign import _close :: Browser -> Effect (Promise Unit)
+foreign import _close :: forall sth. sth -> Effect (Promise Unit)
 
 foreign import data BrowserContext :: Type
 
 foreign import contexts :: Browser -> Effect (Array BrowserContext)
+
+foreign import isConnected :: Browser -> Effect Boolean
+
+foreign import version :: Browser -> Effect String
 
 foreign import data NewpageOptions :: Type
 
@@ -136,3 +157,24 @@ newPage :: forall sth. NewPage sth => sth -> Options NewpageOptions -> Aff Page
 newPage sth opts = toAffE $ _newPage sth (options opts)
 
 foreign import _newPage :: forall sth. sth -> Foreign -> Effect (Promise Page)
+
+foreign import data ElementHandle :: Type
+
+class Query sth
+
+instance queryElementHandle :: Query ElementHandle
+instance queryPage :: Query Page
+instance queryFrame :: Query Frame
+
+type Selector = String
+
+foreign import data Frame :: Type
+
+foreign import query_ :: forall sth. sth -> Selector -> Effect (Promise ElementHandle)
+foreign import queryMany_ :: forall sth. sth -> Selector -> Effect (Promise (Array ElementHandle))
+
+query :: forall sth. Query sth => sth -> Selector -> Aff ElementHandle
+query sth = toAffE <<< query_ sth
+
+queryMany :: forall sth. Query sth => sth -> Selector -> Aff (Array ElementHandle)
+queryMany sth = toAffE <<< queryMany_ sth

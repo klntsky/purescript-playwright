@@ -2,10 +2,6 @@
 
 var P = require('playwright');
 
-exports.chromium = P.chromium;
-exports.firefox = P.firefox;
-exports.webkit = P.webkit;
-
 /**
  * @param {string} property - method to call on object
  * @param {number} n - number of (curried) arguments
@@ -40,7 +36,15 @@ function effectfulGetter (property, n) {
     };
 }
 
+exports.chromium = P.chromium;
+exports.firefox = P.firefox;
+exports.webkit = P.webkit;
+
 exports._launch = effectfulGetter('launch', 1);
 exports._close = effectfulGetter('close', 0);
 exports.contexts = effectfulGetter('contexts', 0);
+exports.isConnected = effectfulGetter('isConnected', 0);
+exports.version = effectfulGetter('version', 0);
 exports._newPage = effectfulGetter('newPage', 1);
+exports.queryMany_ = effectfulGetter('$$', 1);
+exports.query_ = effectfulGetter('$', 1);
