@@ -118,3 +118,21 @@ close :: Browser -> Aff Unit
 close = toAffE <<< _close
 
 foreign import _close :: Browser -> Effect (Promise Unit)
+
+foreign import data BrowserContext :: Type
+
+foreign import contexts :: Browser -> Effect (Array BrowserContext)
+
+foreign import data NewpageOptions :: Type
+
+foreign import data Page :: Type
+
+class NewPage sth
+
+instance newpageBrowser :: NewPage Browser
+instance newpageBrowserContext :: NewPage BrowserContext
+
+newPage :: forall sth. NewPage sth => sth -> Options NewpageOptions -> Aff Page
+newPage sth opts = toAffE $ _newPage sth (options opts)
+
+foreign import _newPage :: forall sth. sth -> Foreign -> Effect (Promise Page)

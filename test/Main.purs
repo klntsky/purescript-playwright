@@ -15,7 +15,7 @@ main = runTest do
     test "launch" do
       browser <- launch firefox $
         headless := false <>
-        slowMo := 10000.0
+        slowMo := 100.0
 
-      -- close browser
+      close browser
       pure unit
