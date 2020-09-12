@@ -1,180 +1,82 @@
 module Playwright
-    ( BrowserType
-    , Browser
-
-    , firefox
-    , chromium
-    , webkit
-
-    , launch
-    , LaunchOptions
-    , headless
-    , executablePath
-    , args
-    , ignoreDefaultArgs
-    , ProxyOptions
-    , server
-    , bypass
-    , username
-    , password
-    , proxy
-    , downloadsPath
-    , chromiumSandbox
-    , firefoxUserPrefs
-    , handleSIGINT
-    , handleSIGTERM
-    , handleSIGHUP
-    , timeout
-    , env
-    , devtools
-    , slowMo
-
-    , class Close
+    ( launch
+    , contexts
+    , isConnected
+    , version
     , close
-
-    , class NewPage
     , newPage
-    , NewpageOptions
-
-    , Frame
-    , ElementHandle
-    , Page
-
-    , class Query
     , query
     , queryMany
+    , module Playwright.Data
+    , module Playwright.Options
     )
 where
 
 import Prelude
 import Effect (Effect)
-import Control.Promise (Promise, toAffE)
-import Data.Options (Option, Options, opt, options)
+import Control.Promise (toAffE)
+import Data.Options (Options, options)
 import Effect.Aff (Aff)
-import Foreign (Foreign)
-import Foreign.Object (Object)
+import Untagged.Union (type (|+|))
+import Node.Buffer (Buffer)
+import Playwright.Data
+import Playwright.Options
+import Playwright.Internal (prop)
 
-foreign import data BrowserType :: Type
-foreign import data Browser :: Type
+launch :: BrowserType -> Options Launch -> Aff Browser
+launch bt =
+  options >>>
+  prop "launch" (\_ -> launch) bt >>>
+  toAffE
 
-foreign import firefox :: BrowserType
-foreign import chromium :: BrowserType
-foreign import webkit :: BrowserType
+close :: Browser |+| BrowserContext |+| Page -> Aff Unit
+close =
+  prop "close" (\_ -> close) >>> toAffE
 
-foreign import _launch :: BrowserType -> Foreign -> Effect (Promise Browser)
+contexts :: Browser -> Effect (Array BrowserContext)
+contexts =
+  prop "contexts" (\_ -> contexts)
 
-launch :: BrowserType -> Options LaunchOptions -> Aff Browser
-launch bt opts = toAffE $ _launch bt (options opts)
+isConnected :: Browser -> Effect Boolean
+isConnected =
+  prop "isConnected" (\_ -> isConnected)
 
-foreign import data LaunchOptions :: Type
+version :: Browser -> Effect String
+version =
+  prop "version" (\_ -> version)
 
-headless :: Option LaunchOptions Boolean
-headless = opt "headless"
+newPage :: Browser |+| BrowserContext -> Options Newpage -> Aff Page
+newPage sth =
+  options >>>
+  prop "newPage" (\_ -> newPage) sth >>>
+  toAffE
 
-executablePath :: Option LaunchOptions String
-executablePath = opt "executablePath"
+-- | `sth.$(selector)`
+query
+  :: ElementHandle |+| Page |+| Frame
+  -> Selector
+  -> Aff ElementHandle
+query sth =
+  toAffE <<< prop "$" (\_ -> query) sth
 
-args :: Option LaunchOptions String
-args = opt "args"
+-- | `sth.$$(selector)
+queryMany
+  :: ElementHandle |+| Page |+| Frame
+  -> Selector
+  -> Aff (Array ElementHandle)
+queryMany sth =
+  toAffE <<< prop "$$" (\_ -> queryMany) sth
 
-ignoreDefaultArgs :: Option LaunchOptions (Array String)
-ignoreDefaultArgs = opt "ignoreDefaultArgs"
+screenshot
+  :: ElementHandle |+| Page
+  -> Options Screenshot
+  -> Aff Buffer
+screenshot sth =
+  options >>>
+  prop "screenshot" (\_ -> screenshot) sth >>>
+  toAffE
 
-foreign import data ProxyOptions :: Type
-
-server :: Option ProxyOptions String
-server = opt "server"
-
-bypass :: Option ProxyOptions String
-bypass = opt "bypass"
-
-username :: Option ProxyOptions String
-username = opt "username"
-
-password :: Option ProxyOptions String
-password = opt "password"
-
-proxy :: Option LaunchOptions (Options ProxyOptions)
-proxy = opt "proxy"
-
-downloadsPath :: Option LaunchOptions String
-downloadsPath = opt "downloadsPath"
-
-chromiumSandbox :: Option LaunchOptions Boolean
-chromiumSandbox = opt "chromiumSandbox"
-
-firefoxUserPrefs :: Option LaunchOptions Foreign
-firefoxUserPrefs = opt "firefoxUserPrefs"
-
-handleSIGINT :: Option LaunchOptions Boolean
-handleSIGINT = opt "handleSIGINT"
-
-handleSIGTERM :: Option LaunchOptions Boolean
-handleSIGTERM = opt "handleSIGTERM"
-
-handleSIGHUP :: Option LaunchOptions Boolean
-handleSIGHUP = opt "handleSIGHUP"
-
-timeout :: Option LaunchOptions Number
-timeout = opt "timeout"
-
-env :: Option LaunchOptions (Object String)
-env = opt "env"
-
-devtools :: Option LaunchOptions Boolean
-devtools = opt "devtools"
-
-slowMo :: Option LaunchOptions Number
-slowMo = opt "slowMo"
-
-class Close sth
-
-instance closeBrowser :: Close Browser
-
-close :: forall sth. Close sth => sth -> Aff Unit
-close = toAffE <<< _close
-
-foreign import _close :: forall sth. sth -> Effect (Promise Unit)
-
-foreign import data BrowserContext :: Type
-
-foreign import contexts :: Browser -> Effect (Array BrowserContext)
-
-foreign import isConnected :: Browser -> Effect Boolean
-
-foreign import version :: Browser -> Effect String
-
-foreign import data NewpageOptions :: Type
-
-foreign import data Page :: Type
-
-class NewPage sth
-
-instance newpageBrowser :: NewPage Browser
-instance newpageBrowserContext :: NewPage BrowserContext
-
-newPage :: forall sth. NewPage sth => sth -> Options NewpageOptions -> Aff Page
-newPage sth opts = toAffE $ _newPage sth (options opts)
-
-foreign import _newPage :: forall sth. sth -> Foreign -> Effect (Promise Page)
-
-foreign import data ElementHandle :: Type
-
-class Query sth
-
-instance queryElementHandle :: Query ElementHandle
-instance queryPage :: Query Page
-instance queryFrame :: Query Frame
-
-type Selector = String
-
-foreign import data Frame :: Type
-
-foreign import query_ :: forall sth. sth -> Selector -> Effect (Promise ElementHandle)
-foreign import queryMany_ :: forall sth. sth -> Selector -> Effect (Promise (Array ElementHandle))
-
-query :: forall sth. Query sth => sth -> Selector -> Aff ElementHandle
-query sth = toAffE <<< query_ sth
-
-queryMany :: forall sth. Query sth => sth -> Selector -> Aff (Array ElementHandle)
-queryMany sth = toAffE <<< queryMany_ sth
+url
+  :: Page |+| Frame |+| Download |+| Request |+| Response |+| Worker
+  -> Effect String
+url = prop "url" \_ -> url

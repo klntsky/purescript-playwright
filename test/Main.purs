@@ -1,13 +1,12 @@
 module Test.Main where
 
 import Prelude
+import Playwright (close, firefox, headless, launch, slowMo)
 import Effect (Effect)
-import Effect.Console (log)
-import Test.Unit.Assert as Assert
-import Playwright
-import Data.Options
-import Test.Unit
-import Test.Unit.Main
+import Data.Options ((:=))
+import Test.Unit (suite, test)
+import Test.Unit.Main (runTest)
+import Untagged.Union (asOneOf)
 
 main :: Effect Unit
 main = runTest do
@@ -16,6 +15,4 @@ main = runTest do
       browser <- launch firefox $
         headless := false <>
         slowMo := 100.0
-
-      close browser
-      pure unit
+      close $ asOneOf browser
