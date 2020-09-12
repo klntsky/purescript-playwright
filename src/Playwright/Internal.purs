@@ -1,7 +1,7 @@
 module Playwright.Internal
        ( class NumberOfArgs
        , numberOfArgs
-       , prop
+       , effProp
        )
  where
 
@@ -55,5 +55,5 @@ foreign import unsafeEffectfulGetter
   -> Int
   -> r
 
-prop :: forall f r. NumberOfArgs f => String -> (Unit -> f) -> r
-prop p f = unsafeEffectfulGetter p (countArgs f)
+effProp :: forall f r. NumberOfArgs f => String -> (Unit -> f) -> r
+effProp p f = unsafeEffectfulGetter p (countArgs f)

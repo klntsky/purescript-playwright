@@ -21,34 +21,34 @@ import Untagged.Union (type (|+|))
 import Node.Buffer (Buffer)
 import Playwright.Data
 import Playwright.Options
-import Playwright.Internal (prop)
+import Playwright.Internal (effProp)
 
 launch :: BrowserType -> Options Launch -> Aff Browser
 launch bt =
   options >>>
-  prop "launch" (\_ -> launch) bt >>>
+  effProp "launch" (\_ -> launch) bt >>>
   toAffE
 
 close :: Browser |+| BrowserContext |+| Page -> Aff Unit
 close =
-  prop "close" (\_ -> close) >>> toAffE
+  effProp "close" (\_ -> close) >>> toAffE
 
 contexts :: Browser -> Effect (Array BrowserContext)
 contexts =
-  prop "contexts" (\_ -> contexts)
+  effProp "contexts" (\_ -> contexts)
 
 isConnected :: Browser -> Effect Boolean
 isConnected =
-  prop "isConnected" (\_ -> isConnected)
+  effProp "isConnected" (\_ -> isConnected)
 
 version :: Browser -> Effect String
 version =
-  prop "version" (\_ -> version)
+  effProp "version" (\_ -> version)
 
 newPage :: Browser |+| BrowserContext -> Options Newpage -> Aff Page
 newPage sth =
   options >>>
-  prop "newPage" (\_ -> newPage) sth >>>
+  effProp "newPage" (\_ -> newPage) sth >>>
   toAffE
 
 -- | `sth.$(selector)`
@@ -57,15 +57,15 @@ query
   -> Selector
   -> Aff ElementHandle
 query sth =
-  toAffE <<< prop "$" (\_ -> query) sth
+  toAffE <<< effProp "$" (\_ -> query) sth
 
--- | `sth.$$(selector)
+-- | `sth.$$(selector)`
 queryMany
   :: ElementHandle |+| Page |+| Frame
   -> Selector
   -> Aff (Array ElementHandle)
 queryMany sth =
-  toAffE <<< prop "$$" (\_ -> queryMany) sth
+  toAffE <<< effProp "$$" (\_ -> queryMany) sth
 
 screenshot
   :: ElementHandle |+| Page
@@ -73,10 +73,10 @@ screenshot
   -> Aff Buffer
 screenshot sth =
   options >>>
-  prop "screenshot" (\_ -> screenshot) sth >>>
+  effProp "screenshot" (\_ -> screenshot) sth >>>
   toAffE
 
 url
   :: Page |+| Frame |+| Download |+| Request |+| Response |+| Worker
   -> Effect String
-url = prop "url" \_ -> url
+url = effProp "url" \_ -> url
