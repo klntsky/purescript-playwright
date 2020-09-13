@@ -12,7 +12,7 @@ import Data.Maybe (Maybe(..))
 
 static :: String -> URL
 static file =
-  URL $ "file://" <> cwd <> "/static/" <> file
+  URL $ "file://" <> cwd <> "/test/static/" <> file
 
 main :: Effect Unit
 main = runTest do
