@@ -31,6 +31,16 @@ derive newtype instance eqSelector :: Eq Selector
 derive newtype instance showSelector :: Show Selector
 derive newtype instance ordSelector :: Ord Selector
 
+newtype URL = URL String
+derive newtype instance eqURL :: Eq URL
+derive newtype instance showURL :: Show URL
+derive newtype instance ordURL :: Ord URL
+
 foreign import firefox :: BrowserType
 foreign import chromium :: BrowserType
 foreign import webkit :: BrowserType
+
+foreign import data WaitUntil :: Type
+foreign import domcontentloaded :: WaitUntil
+foreign import load :: WaitUntil
+foreign import networkidle :: WaitUntil

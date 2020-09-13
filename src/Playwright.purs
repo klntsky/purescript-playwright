@@ -5,8 +5,11 @@ module Playwright
     , version
     , close
     , newPage
+    , goto
     , query
     , queryMany
+    , screenshot
+    , textContent
     , module Playwright.Data
     , module Playwright.Options
     )
@@ -22,6 +25,7 @@ import Node.Buffer (Buffer)
 import Playwright.Data
 import Playwright.Options
 import Playwright.Internal (effProp)
+import Literals.Null
 
 launch :: BrowserType -> Options Launch -> Aff Browser
 launch bt =
@@ -51,6 +55,16 @@ newPage sth =
   effProp "newPage" (\_ -> newPage) sth >>>
   toAffE
 
+goto
+  :: Page |+| Frame
+  -> URL
+  -> Options Goto
+  -> Aff (Null |+| Response)
+goto sth url' =
+  options >>>
+  effProp "goto" (\_ -> goto) sth url' >>>
+  toAffE
+
 -- | `sth.$(selector)`
 query
   :: ElementHandle |+| Page |+| Frame
@@ -74,6 +88,14 @@ screenshot
 screenshot sth =
   options >>>
   effProp "screenshot" (\_ -> screenshot) sth >>>
+  toAffE
+
+textContent
+  :: Page |+| Frame |+| ElementHandle
+  -> Selector
+  -> Aff (Null |+| String)
+textContent sth =
+  effProp "textContent" (\_ -> textContent) sth >>>
   toAffE
 
 url

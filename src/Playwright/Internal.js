@@ -22,7 +22,7 @@ function effectfulGetter (property, n) {
     return function (object) {
         function runner (arg) {
             if (n == 0) {
-                return object[property].call(object, args);
+                return object[property].apply(object, args);
             } else {
                 args.push(arg);
                 n--;

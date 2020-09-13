@@ -6,7 +6,6 @@ import Foreign.Object (Object)
 import Foreign (Foreign)
 
 foreign import data Launch :: Type
-foreign import data Proxy :: Type
 
 headless :: Option Launch Boolean
 headless = opt "headless"
@@ -53,6 +52,8 @@ devtools = opt "devtools"
 slowMo :: Option Launch Number
 slowMo = opt "slowMo"
 
+foreign import data Proxy :: Type
+
 server :: Option Proxy String
 server = opt "server"
 
@@ -83,3 +84,14 @@ omitBackground = opt "omitBackground"
 
 screenshotTimeout :: Option Screenshot Number
 screenshotTimeout = opt "timeout"
+
+foreign import data Goto :: Type
+
+gotoTimeout :: Option Goto Int
+gotoTimeout = opt "timeout"
+
+waitUntil :: Option Goto WaitUntil
+waitUntil = opt "waitUntil"
+
+referer :: Option Goto String
+referer = opt "referer"
