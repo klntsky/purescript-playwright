@@ -1,7 +1,8 @@
 module Playwright.Options where
 
-import Data.Options (Option, Options, opt, options)
 import Playwright.Data
+
+import Data.Options (Option, Options, opt)
 import Foreign.Object (Object)
 import Foreign (Foreign)
 

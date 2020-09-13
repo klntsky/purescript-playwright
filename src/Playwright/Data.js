@@ -11,3 +11,5 @@ exports.webkit = P.webkit;
 exports.domcontentloaded = "domcontentloaded";
 exports.load = "load";
 exports.networkidle = "networkidle";
+
+exports.null = null;

@@ -25,7 +25,6 @@ import Node.Buffer (Buffer)
 import Playwright.Data
 import Playwright.Options
 import Playwright.Internal (effProp)
-import Literals.Null
 
 launch :: BrowserType -> Options Launch -> Aff Browser
 launch bt =

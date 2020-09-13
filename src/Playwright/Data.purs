@@ -1,6 +1,8 @@
 module Playwright.Data where
 
 import Prelude
+import Untagged.TypeCheck (class HasRuntimeType)
+import Foreign (isNull)
 
 foreign import data BrowserType :: Type
 foreign import data Browser :: Type
@@ -44,3 +46,21 @@ foreign import data WaitUntil :: Type
 foreign import domcontentloaded :: WaitUntil
 foreign import load :: WaitUntil
 foreign import networkidle :: WaitUntil
+
+-- | We need our own `null` to make it usable with `untagged-union`.
+-- | TODO: push upstream?
+foreign import data Null :: Type
+
+foreign import null :: Null
+
+instance eqNull :: Eq Null where
+  eq _ _ = true
+
+instance showNull :: Show Null where
+  show _ = "null"
+
+instance ordNull :: Ord Null where
+  compare _ _ = EQ
+
+instance hasRuntimeTypeNull :: HasRuntimeType Null where
+  hasRuntimeType _ = isNull
