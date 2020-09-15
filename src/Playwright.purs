@@ -54,6 +54,24 @@ newPage sth =
   effProp "newPage" (\_ -> newPage) sth >>>
   toAffE
 
+goForward
+  :: Page
+  -> Options Go
+  -> Aff (Null |+| Response)
+goForward page =
+  options >>>
+  effProp "goForward" (\_ -> goForward) page >>>
+  toAffE
+
+goBack
+  :: Page
+  -> Options Go
+  -> Aff (Null |+| Response)
+goBack page =
+  options >>>
+  effProp "goBack" (\_ -> goBack) page >>>
+  toAffE
+
 goto
   :: Page |+| Frame
   -> URL
@@ -63,6 +81,24 @@ goto sth url' =
   options >>>
   effProp "goto" (\_ -> goto) sth url' >>>
   toAffE
+
+hover
+  :: Page |+| Frame |+| ElementHandle
+  -> Options Hover
+  -> Aff Unit
+hover sth =
+  options >>>
+  effProp "hover" (\_ -> hover) sth >>>
+  toAffE
+
+innerHTML
+  :: Page |+| Frame |+| ElementHandle
+  -> Selector
+  -> Options InnerHTML
+  -> Aff String
+innerHTML sth selector =
+  options >>>
+  effProp "innerHTML" (\_ -> innerHTML) sth selector
 
 -- | `sth.$(selector)`
 query

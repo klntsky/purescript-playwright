@@ -47,6 +47,13 @@ foreign import domcontentloaded :: WaitUntil
 foreign import load :: WaitUntil
 foreign import networkidle :: WaitUntil
 
+foreign import data Modifier :: Type
+
+foreign import alt :: Modifier
+foreign import control :: Modifier
+foreign import meta :: Modifier
+foreign import shift :: Modifier
+
 -- | We need our own `null` to make it usable with `untagged-union`.
 -- | TODO: push upstream?
 foreign import data Null :: Type

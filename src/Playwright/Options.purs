@@ -91,8 +91,35 @@ foreign import data Goto :: Type
 gotoTimeout :: Option Goto Int
 gotoTimeout = opt "timeout"
 
-waitUntil :: Option Goto WaitUntil
-waitUntil = opt "waitUntil"
+gotoWaitUntil :: Option Goto WaitUntil
+gotoWaitUntil = opt "waitUntil"
 
 referer :: Option Goto String
 referer = opt "referer"
+
+foreign import data Go :: Type
+
+goTimeout :: Option Go Int
+goTimeout = opt "timeout"
+
+goWaitUntil :: Option Go WaitUntil
+goWaitUntil = opt "waitUntil"
+
+foreign import data Hover :: Type
+
+position :: Option Hover { x :: Number, y :: Number }
+position = opt "position"
+
+modifier :: Option Hover (Array Modifier)
+modifier = opt "modifier"
+
+force :: Option Hover Boolean
+force = opt "force"
+
+hoverTimeout :: Option Hover Number
+hoverTimeout = opt "timeout"
+
+foreign import data InnerHTML :: Type
+
+innerHTMLTimeout :: Option InnerHTML Number
+innerHTMLTimeout = opt "timeout"
