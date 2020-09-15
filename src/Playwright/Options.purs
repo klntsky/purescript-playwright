@@ -2,124 +2,78 @@ module Playwright.Options where
 
 import Playwright.Data
 
-import Data.Options (Option, Options, opt)
 import Foreign.Object (Object)
 import Foreign (Foreign)
+import Untagged.Union (UndefinedOr, type (|+|))
+import Untagged.Coercible (class Coercible, coerce)
 
-foreign import data Launch :: Type
+-- | A "no options" value, defined as `coerce {}`.
+empty :: forall a. Coercible {} a => a
+empty = coerce {}
 
-headless :: Option Launch Boolean
-headless = opt "headless"
+type Op a = UndefinedOr a
 
-executablePath :: Option Launch String
-executablePath = opt "executablePath"
+type LaunchOptions =
+  { headless          :: Op Boolean
+  , executablePath    :: Op String
+  , args              :: Op String
+  , ignoreDefaultArgs :: Op (Array String)
+  , proxy             :: Op ProxyOptions
+  , downloadsPath     :: Op String
+  , chromiumSandbox   :: Op Boolean
+  , firefoxUserPrefs  :: Op Foreign
+  , handleSIGINT      :: Op Boolean
+  , handleSIGTERM     :: Op Boolean
+  , handleSIGHUP      :: Op Boolean
+  , timeout           :: Op Number
+  , env               :: Op (Object String)
+  , devtools          :: Op Boolean
+  , slowMo            :: Op Number
+  }
 
-args :: Option Launch String
-args = opt "args"
+type ProxyOptions =
+  { server   :: Op String
+  , bypass   :: Op String
+  , username :: Op String
+  , password :: Op String
+  }
 
-ignoreDefaultArgs :: Option Launch (Array String)
-ignoreDefaultArgs = opt "ignoreDefaultArgs"
+type ScreenshotOptions =
+  { path           :: Op String
+  , "type"         :: Op ScreenshotType
+  , quality        :: Op Number
+  , omitBackground :: Op Boolean
+  , timeout        :: Op Number
+  }
 
-proxy :: Option Launch (Options Proxy)
-proxy = opt "proxy"
+type GotoOptions =
+  { timeout   :: Op Int
+  , waitUntil :: Op WaitUntil
+  , referer   :: Op String
+  }
 
-downloadsPath :: Option Launch String
-downloadsPath = opt "downloadsPath"
+type NewpageOptions =
+  { acceptDownloads   :: Op Boolean
+  , ignoreHTTPSErrors :: Op Boolean
+  , bypassCSP         :: Op Boolean
+  , viewport          :: Op (Null |+| { width :: Int, height :: Int })
+  }
 
-chromiumSandbox :: Option Launch Boolean
-chromiumSandbox = opt "chromiumSandbox"
+type GoOptions =
+  { timeout   :: Op Int
+  , waitUntil :: Op WaitUntil
+  }
 
-firefoxUserPrefs :: Option Launch Foreign
-firefoxUserPrefs = opt "firefoxUserPrefs"
+type HoverOptions =
+  { position :: Op { x :: Number, y :: Number }
+  , modifier :: Op (Array Modifier)
+  , force    :: Op Boolean
+  }
 
-handleSIGINT :: Option Launch Boolean
-handleSIGINT = opt "handleSIGINT"
+type InnerHTMLOptions =
+  { timeout :: Op Number
+  }
 
-handleSIGTERM :: Option Launch Boolean
-handleSIGTERM = opt "handleSIGTERM"
-
-handleSIGHUP :: Option Launch Boolean
-handleSIGHUP = opt "handleSIGHUP"
-
-timeout :: Option Launch Number
-timeout = opt "timeout"
-
-env :: Option Launch (Object String)
-env = opt "env"
-
-devtools :: Option Launch Boolean
-devtools = opt "devtools"
-
-slowMo :: Option Launch Number
-slowMo = opt "slowMo"
-
-foreign import data Proxy :: Type
-
-server :: Option Proxy String
-server = opt "server"
-
-bypass :: Option Proxy String
-bypass = opt "bypass"
-
-username :: Option Proxy String
-username = opt "username"
-
-password :: Option Proxy String
-password = opt "password"
-
-foreign import data Newpage :: Type
-
-foreign import data Screenshot :: Type
-
-path :: Option Screenshot String
-path = opt "path"
-
-screenshotType :: Option Screenshot ScreenshotType
-screenshotType = opt "type"
-
-quality :: Option Screenshot Number
-quality = opt "quality"
-
-omitBackground :: Option Screenshot Boolean
-omitBackground = opt "omitBackground"
-
-screenshotTimeout :: Option Screenshot Number
-screenshotTimeout = opt "timeout"
-
-foreign import data Goto :: Type
-
-gotoTimeout :: Option Goto Int
-gotoTimeout = opt "timeout"
-
-gotoWaitUntil :: Option Goto WaitUntil
-gotoWaitUntil = opt "waitUntil"
-
-referer :: Option Goto String
-referer = opt "referer"
-
-foreign import data Go :: Type
-
-goTimeout :: Option Go Int
-goTimeout = opt "timeout"
-
-goWaitUntil :: Option Go WaitUntil
-goWaitUntil = opt "waitUntil"
-
-foreign import data Hover :: Type
-
-position :: Option Hover { x :: Number, y :: Number }
-position = opt "position"
-
-modifier :: Option Hover (Array Modifier)
-modifier = opt "modifier"
-
-force :: Option Hover Boolean
-force = opt "force"
-
-hoverTimeout :: Option Hover Number
-hoverTimeout = opt "timeout"
-
-foreign import data InnerHTML :: Type
-
-innerHTMLTimeout :: Option InnerHTML Number
-innerHTMLTimeout = opt "timeout"
+type InnerTextOptions =
+  { timeout :: Op Number
+  }

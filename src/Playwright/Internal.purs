@@ -1,12 +1,14 @@
 module Playwright.Internal
        ( class NumberOfArgs
        , numberOfArgs
+       , effCall
        , effProp
        )
  where
 
 import Type.Proxy
 import Prelude
+import Effect
 
 class NumberOfArgs x where
   numberOfArgs :: Proxy x -> Int
@@ -49,11 +51,13 @@ countArgs f = numberOfArgs (proxyOf (f unit)) - 1
     proxyOf :: forall a. a -> Proxy a
     proxyOf _ = Proxy :: Proxy a
 
-foreign import unsafeEffectfulGetter
+foreign import unsafeEffCall
   :: forall r
   .  String
   -> Int
   -> r
 
-effProp :: forall f r. NumberOfArgs f => String -> (Unit -> f) -> r
-effProp p f = unsafeEffectfulGetter p (countArgs f)
+effCall :: forall f r. NumberOfArgs f => String -> (Unit -> f) -> r
+effCall p f = unsafeEffCall p (countArgs f)
+
+foreign import effProp :: forall obj r. String -> obj -> Effect r

@@ -34,8 +34,16 @@ function effectfulGetter (property, n) {
     };
 }
 
-exports.unsafeEffectfulGetter = function (prop) {
+exports.unsafeEffCall = function (method) {
     return function (argsCount) {
-        return effectfulGetter(prop, argsCount);
+        return effectfulGetter(method, argsCount);
     };
 };
+
+exports.effProp = function (prop) {
+    return function (object) {
+        return function () {
+            return object[prop];
+        };
+    };
+}

@@ -18,95 +18,86 @@ where
 import Prelude
 import Effect (Effect)
 import Control.Promise (toAffE)
-import Data.Options (Options, options)
 import Effect.Aff (Aff)
 import Untagged.Union (type (|+|))
 import Node.Buffer (Buffer)
 import Playwright.Data
 import Playwright.Options
-import Playwright.Internal (effProp)
+import Playwright.Internal (effCall, effProp)
 
-launch :: BrowserType -> Options Launch -> Aff Browser
+launch :: BrowserType -> LaunchOptions -> Aff Browser
 launch bt =
-  options >>>
-  effProp "launch" (\_ -> launch) bt >>>
+  effCall "launch" (\_ -> launch) bt >>>
   toAffE
 
 close :: Browser |+| BrowserContext |+| Page -> Aff Unit
 close =
-  effProp "close" (\_ -> close) >>> toAffE
+  effCall "close" (\_ -> close) >>> toAffE
 
 contexts :: Browser -> Effect (Array BrowserContext)
 contexts =
-  effProp "contexts" (\_ -> contexts)
+  effCall "contexts" (\_ -> contexts)
 
 isConnected :: Browser -> Effect Boolean
 isConnected =
-  effProp "isConnected" (\_ -> isConnected)
+  effCall "isConnected" (\_ -> isConnected)
 
 version :: Browser -> Effect String
 version =
-  effProp "version" (\_ -> version)
+  effCall "version" (\_ -> version)
 
-newPage :: Browser |+| BrowserContext -> Options Newpage -> Aff Page
+newPage :: Browser |+| BrowserContext -> NewpageOptions -> Aff Page
 newPage sth =
-  options >>>
-  effProp "newPage" (\_ -> newPage) sth >>>
+  effCall "newPage" (\_ -> newPage) sth >>>
   toAffE
 
-goForward
-  :: Page
-  -> Options Go
-  -> Aff (Null |+| Response)
+goForward :: Page -> GoOptions -> Aff (Null |+| Response)
 goForward page =
-  options >>>
-  effProp "goForward" (\_ -> goForward) page >>>
+  effCall "goForward" (\_ -> goForward) page >>>
   toAffE
 
-goBack
-  :: Page
-  -> Options Go
-  -> Aff (Null |+| Response)
+goBack :: Page -> GoOptions -> Aff (Null |+| Response)
 goBack page =
-  options >>>
-  effProp "goBack" (\_ -> goBack) page >>>
+  effCall "goBack" (\_ -> goBack) page >>>
   toAffE
 
-goto
-  :: Page |+| Frame
-  -> URL
-  -> Options Goto
-  -> Aff (Null |+| Response)
+goto :: Page |+| Frame -> URL -> GotoOptions -> Aff (Null |+| Response)
 goto sth url' =
-  options >>>
-  effProp "goto" (\_ -> goto) sth url' >>>
+  effCall "goto" (\_ -> goto) sth url' >>>
   toAffE
 
-hover
-  :: Page |+| Frame |+| ElementHandle
-  -> Options Hover
-  -> Aff Unit
+hover :: Page |+| Frame |+| ElementHandle -> HoverOptions -> Aff Unit
 hover sth =
-  options >>>
-  effProp "hover" (\_ -> hover) sth >>>
+  effCall "hover" (\_ -> hover) sth >>>
   toAffE
 
 innerHTML
   :: Page |+| Frame |+| ElementHandle
   -> Selector
-  -> Options InnerHTML
+  -> InnerHTMLOptions
   -> Aff String
 innerHTML sth selector =
-  options >>>
-  effProp "innerHTML" (\_ -> innerHTML) sth selector
+  effCall "innerHTML" (\_ -> innerHTML) sth selector
+
+innerText
+  :: Page |+| Frame |+| ElementHandle
+  -> Selector
+  -> InnerTextOptions
+  -> Aff String
+innerText sth selector =
+  effCall "innerText" (\_ -> innerText) sth selector
+
+isClosed :: Page -> Effect Boolean
+isClosed = effCall "isClosed" \_ -> isClosed
+
+keyboard :: Page -> Effect Keyboard
+keyboard = effProp "keyboard"
 
 -- | `sth.$(selector)`
 query
-  :: ElementHandle |+| Page |+| Frame
-  -> Selector
-  -> Aff ElementHandle
+  :: ElementHandle |+| Page |+| Frame -> Selector -> Aff ElementHandle
 query sth =
-  toAffE <<< effProp "$" (\_ -> query) sth
+  toAffE <<< effCall "$" (\_ -> query) sth
 
 -- | `sth.$$(selector)`
 queryMany
@@ -114,26 +105,21 @@ queryMany
   -> Selector
   -> Aff (Array ElementHandle)
 queryMany sth =
-  toAffE <<< effProp "$$" (\_ -> queryMany) sth
+  toAffE <<< effCall "$$" (\_ -> queryMany) sth
 
 screenshot
-  :: ElementHandle |+| Page
-  -> Options Screenshot
-  -> Aff Buffer
+  :: ElementHandle |+| Page -> ScreenshotOptions -> Aff Buffer
 screenshot sth =
-  options >>>
-  effProp "screenshot" (\_ -> screenshot) sth >>>
+  effCall "screenshot" (\_ -> screenshot) sth >>>
   toAffE
 
 textContent
-  :: Page |+| Frame |+| ElementHandle
-  -> Selector
-  -> Aff (Null |+| String)
+  :: Page |+| Frame |+| ElementHandle -> Selector -> Aff (Null |+| String)
 textContent sth =
-  effProp "textContent" (\_ -> textContent) sth >>>
+  effCall "textContent" (\_ -> textContent) sth >>>
   toAffE
 
 url
   :: Page |+| Frame |+| Download |+| Request |+| Response |+| Worker
   -> Effect String
-url = effProp "url" \_ -> url
+url = effCall "url" \_ -> url
