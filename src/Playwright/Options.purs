@@ -77,3 +77,7 @@ type InnerHTMLOptions =
 type InnerTextOptions =
   { timeout :: Op Number
   }
+
+type KeyboardPressOptions =
+  { delay :: Op Int
+  }
