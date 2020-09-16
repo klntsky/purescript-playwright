@@ -6,7 +6,6 @@ import Effect (Effect)
 import Test.Unit (suite, test)
 import Test.Unit.Main (runTest)
 import Untagged.Union (asOneOf, fromOneOf)
-import Untagged.Coercible
 import Test.Unit.Assert as Assert
 import Data.Maybe (Maybe(..))
 
@@ -18,17 +17,17 @@ main :: Effect Unit
 main = runTest do
   suite "browser" do
     test "launch" do
-      browser <- launch firefox (coerce {})
-      close $ asOneOf browser
+      browser <- launch firefox {}
+      close browser
     test "textContent" do
-      browser <- launch firefox (coerce {})
-      page <- newPage (asOneOf browser) (coerce {})
+      browser <- launch firefox {}
+      page <- newPage browser {}
       void $ goto
-        (asOneOf page)
+        page
         (static "hello.html")
-        (coerce {})
-      text <- textContent (asOneOf page) (Selector "body")
+        {}
+      text <- textContent page (Selector "body")
       Assert.equal (Just "hello\n") (fromOneOf text)
-      close $ asOneOf browser
+      close browser
 
 foreign import cwd :: String
