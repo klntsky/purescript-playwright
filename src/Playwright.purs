@@ -17,31 +17,31 @@ where
 
 import Prelude
 import Effect (Effect)
-import Control.Promise (toAffE)
+-- import Control.Promise (toAffE)
 import Effect.Aff (Aff)
 import Untagged.Coercible (class Coercible, coerce)
-import Untagged.Union (type (|+|))
+import Untagged.Union (type (|+|), UndefinedOr)
 import Node.Buffer (Buffer)
 import Playwright.Data
 import Playwright.Options
-import Playwright.Internal (effCall, effProp)
+import Playwright.Internal (effCall, effProp, affCall)
+import Literals.Null (Null)
 
 launch
   :: forall o
   .  Coercible o LaunchOptions
   => BrowserType -> o -> Aff Browser
 launch bt opts =
-  toAffE $ effCall "launch" typeInfo bt (coerce opts :: LaunchOptions)
+  affCall "launch" typeInfo bt (coerce opts :: LaunchOptions)
   where
-    typeInfo _ = launch :: BrowserType -> o -> Aff Browser
+    typeInfo _ = launch
 
 close
   :: forall x
   .  Coercible x (Browser |+| BrowserContext |+| Page)
   => x -> Aff Unit
 close x =
-  toAffE $ effCall "close" typeInfo x
-  where typeInfo _ = close :: x -> Aff Unit
+  affCall "close" (\_ -> close) x
 
 contexts :: Browser -> Effect (Array BrowserContext)
 contexts =
@@ -61,7 +61,7 @@ newPage
   => Coercible o NewpageOptions
   => x -> o -> Aff Page
 newPage sth opts =
-  toAffE $ effCall "newPage" typeInfo sth (coerce opts :: NewpageOptions)
+  affCall "newPage" typeInfo sth opts
   where typeInfo _ = newPage :: x -> o -> Aff Page
 
 goForward
@@ -69,16 +69,16 @@ goForward
   .  Coercible o GoOptions
   => Page -> o -> Aff (Null |+| Response)
 goForward page opts =
-  toAffE $ effCall "goForward" typeInfo page (coerce opts :: GoOptions)
-  where typeInfo _ = goForward :: Page -> o -> Aff (Null |+| Response)
+  affCall "goForward" typeInfo page (coerce opts :: GoOptions)
+  where typeInfo _ = goForward
 
 goBack
   :: forall o
   .  Coercible o GoOptions
   => Page -> o -> Aff (Null |+| Response)
 goBack page opts =
-  toAffE $ effCall "goBack" typeInfo page (coerce opts :: GoOptions)
-  where typeInfo _ = goBack :: Page -> o -> Aff (Null |+| Response)
+  affCall "goBack" typeInfo page (coerce opts :: GoOptions)
+  where typeInfo _ = goBack
 
 goto
   :: forall x o
@@ -86,8 +86,23 @@ goto
   => Coercible o GotoOptions
   => x -> URL -> o -> Aff (Null |+| Response)
 goto x url' opts =
-  toAffE $ effCall "goto" typeInfo x url' (coerce opts :: GotoOptions)
-  where typeInfo _ = goto :: x -> URL -> o -> Aff (Null |+| Response)
+  affCall "goto" typeInfo x url' (coerce opts :: GotoOptions)
+  where typeInfo _ = goto
+
+type Cookie =
+  { name :: String
+  , value :: String
+  , url :: UndefinedOr String
+  }
+
+addCookies
+  :: BrowserContext
+  -> Array Cookie
+  -> Aff Unit
+addCookies bc cookies =
+  affCall "addCookies" typeInfo bc cookies
+  where
+    typeInfo _ = addCookies
 
 hover
   :: forall x o
@@ -95,7 +110,7 @@ hover
   => Coercible o HoverOptions
   => x -> o -> Aff Unit
 hover sth opts =
-  toAffE $ effCall "hover" typeInfo sth (coerce opts :: HoverOptions)
+  affCall "hover" typeInfo sth opts
   where typeInfo _ = hover :: x -> o -> Aff Unit
 
 innerHTML
@@ -104,12 +119,8 @@ innerHTML
   => Coercible o InnerHTMLOptions
   => x -> Selector -> o -> Aff String
 innerHTML x selector o =
-  toAffE $ effCall "innerHTML" typeInfo x selector (coerce o :: InnerHTMLOptions)
+  affCall "innerHTML" typeInfo x selector (coerce o :: InnerHTMLOptions)
   where typeInfo _ = innerHTML
-          :: x
-          -> Selector
-          -> o
-          -> Aff String
 
 innerText
   :: forall x o
@@ -120,7 +131,7 @@ innerText
   -> o
   -> Aff String
 innerText x sel o =
-  toAffE $ effCall "innerText" typeInfo x sel o
+  affCall "innerText" typeInfo x sel o
   where typeInfo _ = innerText
           :: x -> Selector -> o -> Aff String
 
@@ -135,8 +146,8 @@ query
   :: forall x
   .  Coercible x (ElementHandle |+| Page |+| Frame)
   => x -> Selector -> Aff ElementHandle
-query x sel =
-  toAffE $ effCall "$" typeInfo x sel
+query x =
+  affCall "$" typeInfo x
   where typeInfo _ = query :: x -> Selector -> Aff ElementHandle
 
 -- | `sth.$$(selector)`
@@ -144,8 +155,8 @@ queryMany
   :: forall x
   .  Coercible x (ElementHandle |+| Page |+| Frame)
   => x -> Selector -> Aff (Array ElementHandle)
-queryMany sth sel =
-  toAffE $ effCall "$$" typeInfo sth sel
+queryMany sth =
+  affCall "$$" typeInfo sth
   where typeInfo _ = queryMany :: x -> Selector -> Aff (Array ElementHandle)
 
 screenshot
@@ -154,16 +165,16 @@ screenshot
   => Coercible o ScreenshotOptions
   => x -> o -> Aff Buffer
 screenshot x o =
-  toAffE $ effCall "screenshot" typeInfo x (coerce o :: ScreenshotOptions)
-  where typeInfo _ = screenshot :: x -> o -> Aff Buffer
+  affCall "screenshot" typeInfo x o
+  where typeInfo _ = screenshot
 
 textContent
   :: forall x
   .  Coercible x (Page |+| Frame |+| ElementHandle)
   => x -> Selector -> Aff (Null |+| String)
-textContent x sel =
-  toAffE $ effCall "textContent" typeInfo x sel
-  where typeInfo _ = textContent :: x -> Selector -> Aff (Null |+| String)
+textContent x =
+  affCall "textContent" typeInfo x
+  where typeInfo _ = textContent
 
 url
   :: forall x

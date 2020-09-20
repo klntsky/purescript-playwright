@@ -2,7 +2,6 @@ module Playwright.Data where
 
 import Prelude
 import Untagged.TypeCheck (class HasRuntimeType)
-import Foreign (isNull)
 
 foreign import data BrowserType :: Type
 foreign import data Browser :: Type
@@ -53,21 +52,3 @@ foreign import alt :: Modifier
 foreign import control :: Modifier
 foreign import meta :: Modifier
 foreign import shift :: Modifier
-
--- | We need our own `null` to make it usable with `untagged-union`.
--- | TODO: push upstream?
-foreign import data Null :: Type
-
-foreign import null :: Null
-
-instance eqNull :: Eq Null where
-  eq _ _ = true
-
-instance showNull :: Show Null where
-  show _ = "null"
-
-instance ordNull :: Ord Null where
-  compare _ _ = EQ
-
-instance hasRuntimeTypeNull :: HasRuntimeType Null where
-  hasRuntimeType _ = isNull

@@ -17,10 +17,10 @@ main :: Effect Unit
 main = runTest do
   suite "browser" do
     test "launch" do
-      browser <- launch firefox {}
+      browser <- launch chromium {}
       close browser
     test "textContent" do
-      browser <- launch firefox {}
+      browser <- launch chromium {}
       page <- newPage browser {}
       void $ goto
         page

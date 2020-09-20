@@ -5,6 +5,7 @@ import Playwright.Data
 import Foreign.Object (Object)
 import Foreign (Foreign)
 import Untagged.Union (UndefinedOr, type (|+|))
+import Literals.Null (Null)
 
 type Opt a = UndefinedOr a
 
