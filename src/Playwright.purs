@@ -1,38 +1,48 @@
 module Playwright
     ( launch
+    , close
     , contexts
     , isConnected
     , version
-    , close
     , newPage
+    , goForward
+    , goBack
     , goto
+    , addCookies
+    , hover
+    , innerHTML
+    , innerText
+    , isClosed
+    , keyboard
+    , mainFrame
+    , name
     , query
     , queryMany
     , screenshot
     , textContent
+    , url
     , module Playwright.Data
     , module Playwright.Options
     )
 where
 
-import Prelude
 import Effect (Effect)
--- import Control.Promise (toAffE)
 import Effect.Aff (Aff)
-import Untagged.Coercible (class Coercible, coerce)
-import Untagged.Union (type (|+|), UndefinedOr)
+import Literals.Null (Null)
 import Node.Buffer (Buffer)
 import Playwright.Data
-import Playwright.Options
 import Playwright.Internal (effCall, effProp, affCall)
-import Literals.Null (Null)
+import Playwright.Options
+import Prelude
+import Untagged.Coercible (class Coercible)
+import Untagged.Union (type (|+|), UndefinedOr)
 
 launch
   :: forall o
   .  Coercible o LaunchOptions
   => BrowserType -> o -> Aff Browser
 launch bt opts =
-  affCall "launch" typeInfo bt (coerce opts :: LaunchOptions)
+  affCall "launch" typeInfo bt opts
   where
     typeInfo _ = launch
 
@@ -62,14 +72,14 @@ newPage
   => x -> o -> Aff Page
 newPage sth opts =
   affCall "newPage" typeInfo sth opts
-  where typeInfo _ = newPage :: x -> o -> Aff Page
+  where typeInfo _ = newPage
 
 goForward
   :: forall o
   .  Coercible o GoOptions
   => Page -> o -> Aff (Null |+| Response)
 goForward page opts =
-  affCall "goForward" typeInfo page (coerce opts :: GoOptions)
+  affCall "goForward" typeInfo page opts
   where typeInfo _ = goForward
 
 goBack
@@ -77,7 +87,7 @@ goBack
   .  Coercible o GoOptions
   => Page -> o -> Aff (Null |+| Response)
 goBack page opts =
-  affCall "goBack" typeInfo page (coerce opts :: GoOptions)
+  affCall "goBack" typeInfo page opts
   where typeInfo _ = goBack
 
 goto
@@ -86,7 +96,7 @@ goto
   => Coercible o GotoOptions
   => x -> URL -> o -> Aff (Null |+| Response)
 goto x url' opts =
-  affCall "goto" typeInfo x url' (coerce opts :: GotoOptions)
+  affCall "goto" typeInfo x url' opts
   where typeInfo _ = goto
 
 type Cookie =
@@ -101,8 +111,7 @@ addCookies
   -> Aff Unit
 addCookies bc cookies =
   affCall "addCookies" typeInfo bc cookies
-  where
-    typeInfo _ = addCookies
+  where typeInfo _ = addCookies
 
 hover
   :: forall x o
@@ -118,8 +127,8 @@ innerHTML
   .  Coercible x (Page |+| Frame |+| ElementHandle)
   => Coercible o InnerHTMLOptions
   => x -> Selector -> o -> Aff String
-innerHTML x selector o =
-  affCall "innerHTML" typeInfo x selector (coerce o :: InnerHTMLOptions)
+innerHTML x selector opts =
+  affCall "innerHTML" typeInfo x selector opts
   where typeInfo _ = innerHTML
 
 innerText
@@ -130,16 +139,21 @@ innerText
   -> Selector
   -> o
   -> Aff String
-innerText x sel o =
-  affCall "innerText" typeInfo x sel o
-  where typeInfo _ = innerText
-          :: x -> Selector -> o -> Aff String
+innerText x sel opts =
+  affCall "innerText" typeInfo x sel opts
+  where typeInfo _ = innerText :: x -> Selector -> o -> Aff String
 
 isClosed :: Page -> Effect Boolean
 isClosed = effCall "isClosed" \_ -> isClosed
 
 keyboard :: Page -> Effect Keyboard
 keyboard = effProp "keyboard"
+
+mainFrame :: Page -> Effect Frame
+mainFrame = effCall "mainFrame" \_ -> mainFrame
+
+name :: Frame -> Effect String
+name = effCall "name" \_ -> name
 
 -- | `sth.$(selector)`
 query
@@ -180,6 +194,6 @@ url
   :: forall x
   .  Coercible x (Page |+| Frame |+| Download |+| Request |+| Response |+| Worker)
   => x
-  -> Effect String
-url = effCall "url" typeInfo
-  where typeInfo _ = url :: x -> Effect String
+  -> Effect URL
+url x = effCall "url" typeInfo x
+  where typeInfo _ = url

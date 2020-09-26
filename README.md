@@ -1,2 +1,3 @@
 # purescript-playwright
-PureScript bindings for Playwright
+
+PureScript bindings for Playwright.
