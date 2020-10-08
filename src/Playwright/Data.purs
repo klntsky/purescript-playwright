@@ -52,3 +52,8 @@ foreign import alt :: Modifier
 foreign import control :: Modifier
 foreign import meta :: Modifier
 foreign import shift :: Modifier
+
+foreign import data MouseButton :: Type
+foreign import left :: MouseButton
+foreign import right :: MouseButton
+foreign import middle :: MouseButton

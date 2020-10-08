@@ -21,6 +21,11 @@ module Playwright
     , screenshot
     , textContent
     , url
+    , addInitScript
+    , clearCookies
+    , click
+    , content
+    , dblclick
     , module Playwright.Data
     , module Playwright.Options
     )
@@ -195,5 +200,55 @@ url
   .  Coercible x (Page |+| Frame |+| Download |+| Request |+| Response |+| Worker)
   => x
   -> Effect URL
-url x = effCall "url" typeInfo x
+url x =
+  effCall "url" typeInfo x
   where typeInfo _ = url
+
+addInitScript
+  :: forall x o
+  .  Coercible x (Page |+| BrowserContext)
+  => Coercible o AddInitScriptOptions
+  => x
+  -> o
+  -> Aff Unit
+addInitScript x =
+  affCall "addInitScript" typeInfo x
+  where typeInfo _ = addInitScript
+
+clearCookies :: BrowserContext -> Aff Unit
+clearCookies x =
+  affCall "clearCookies" typeInfo x
+  where typeInfo _ = clearCookies
+
+click
+  :: forall x o
+  .  Coercible x (Page |+| Frame |+| ElementHandle)
+  => Coercible o ClickOptions
+  => x
+  -> Selector
+  -> o
+  -> Aff Unit
+click x s =
+  affCall "click" typeInfo x s
+  where typeInfo _ = click
+
+content
+  :: forall x
+  . Coercible x (Page |+| Frame)
+  => x
+  -> Aff String
+content x =
+  affCall "content" typeInfo x
+  where typeInfo _ = content
+
+dblclick
+  :: forall x o
+  .  Coercible x (Page |+| Frame |+| ElementHandle)
+  => Coercible o ClickOptions
+  => x
+  -> Selector
+  -> o
+  -> Aff Unit
+dblclick x s o =
+  affCall "dblclick" typeInfo x s o
+  where typeInfo _ = dblclick

@@ -61,7 +61,7 @@ type GoOptions =
   }
 
 type HoverOptions =
-  { position :: Opt { x :: Number, y :: Number }
+  { position :: Opt Position
   , modifier :: Opt (Array Modifier)
   , force    :: Opt Boolean
   }
@@ -76,4 +76,20 @@ type InnerTextOptions =
 
 type KeyboardPressOptions =
   { delay :: Opt Int
+  }
+
+type AddInitScriptOptions =
+  (String |+| { path :: Opt String, content :: Opt String })
+
+type Position = { x :: Int, y :: Int }
+
+type ClickOptions =
+  { button      :: Opt MouseButton
+  , clickCount  :: Opt Int
+  , delay       :: Opt Int
+  , position    :: Opt Position
+  , modifiers   :: Opt (Array Modifier)
+  , force       :: Opt Boolean
+  , noWaitAfter :: Opt Boolean
+  , timeout     :: Opt Int
   }

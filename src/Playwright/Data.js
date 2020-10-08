@@ -18,3 +18,7 @@ exports.meta = "Meta";
 exports.shift = "Shift";
 
 exports.null = null;
+
+exports.left = "left";
+exports.right = "right";
+exports.middle = "middle";
