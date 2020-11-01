@@ -14,8 +14,7 @@ click
   -> Int
   -> MouseClickOptions
   -> Aff Unit
-click m x y o = affCall "click" typeInfo m x y o
-  where typeInfo _ = click
+click = affCall "click" \_ -> click
 
 dblclick
   :: Mouse
@@ -23,8 +22,7 @@ dblclick
   -> Int
   -> MouseDblClickOptions
   -> Aff Unit
-dblclick m x y o = affCall "dblclick" typeInfo m x y o
-  where typeInfo _ = dblclick
+dblclick = affCall "dblclick" \_ -> dblclick
 
 down
   :: forall o
@@ -32,8 +30,7 @@ down
   => Mouse
   -> o
   -> Aff Unit
-down m o = affCall "down" typeInfo m o
-  where typeInfo _ = down
+down = affCall "down" \_ -> down
 
 move
   :: forall o
@@ -41,8 +38,7 @@ move
   => Mouse
   -> o
   -> Aff Unit
-move m o = affCall "move" typeInfo m o
-  where typeInfo _ = move
+move = affCall "move" \_ -> move
 
 up
   :: forall o
@@ -50,5 +46,4 @@ up
   => Mouse
   -> o
   -> Aff Unit
-up m o = affCall "up" typeInfo m o
-  where typeInfo _ = up
+up = affCall "up" \_ -> up

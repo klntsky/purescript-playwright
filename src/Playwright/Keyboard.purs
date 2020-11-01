@@ -11,26 +11,26 @@ import Untagged.Coercible (class Coercible, coerce)
 type Key = String
 
 down :: Keyboard -> Key -> Aff Unit
-down kbd =
-  affCall "down" (\_ -> down) kbd
+down =
+  affCall "down" \_ -> down
 
 insertText :: Keyboard -> String -> Aff Unit
-insertText kbd =
-  affCall "insertText" (\_ -> insertText) kbd
+insertText =
+  affCall "insertText" \_ -> insertText
 
 press
   :: forall o
   .  Coercible o KeyboardPressOptions
   => Keyboard -> Key -> o -> Aff Unit
-press kbd key opts =
-  affCall "press" (\_ -> press) kbd key opts
+press =
+  affCall "press" \_ -> press
 
 type'
   :: forall o
   .  Coercible o KeyboardPressOptions
   => Keyboard -> String -> o -> Aff Unit
-type' kbd text opts =
-  affCall "type" (\_ -> type') kbd text opts
+type' =
+  affCall "type" \_ -> type'
 
 up :: Keyboard -> Key -> Aff Unit
-up kbd = affCall "up" (\_ -> up) kbd
+up = affCall "up" \_ -> up
