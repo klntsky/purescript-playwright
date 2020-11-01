@@ -16,7 +16,7 @@ assertForeignTrue value = do
   Assert.assert "Foreign value is boolean true" (eiBool == Right true)
 
 withBrowser :: forall a. (Browser -> Aff a) -> Aff a
-withBrowser action = withResource acquire release action
+withBrowser = withResource acquire release
   where
     acquire = launch chromium {}
     release = close
@@ -25,9 +25,13 @@ withBrowserPage :: forall a. URL -> (Page -> Aff a) -> Aff a
 withBrowserPage url action = do
   withBrowser
     \browser -> do
-      page <- newPage browser {}
-      void $ goto page url {}
-      action page
+      let
+        acquire = newPage browser {}
+        release = close
+      withResource acquire release
+        \page -> do
+          void $ goto page url {}
+          action page
 
 testClickEvent :: String -> (Page -> Selector -> {} -> Aff Unit) -> Page -> Aff Unit
 testClickEvent event action page = do
