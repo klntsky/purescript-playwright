@@ -51,17 +51,15 @@ launch
   :: forall o
   .  Coercible o LaunchOptions
   => BrowserType -> o -> Aff Browser
-launch bt opts =
-  affCall "launch" typeInfo bt opts
-  where
-    typeInfo _ = launch
+launch =
+  affCall "launch" \_ -> launch
 
 close
   :: forall x
   .  Coercible x (Browser |+| BrowserContext |+| Page)
   => x -> Aff Unit
-close x =
-  affCall "close" (\_ -> close) x
+close =
+  affCall "close" \_ -> close
 
 contexts :: Browser -> Effect (Array BrowserContext)
 contexts =

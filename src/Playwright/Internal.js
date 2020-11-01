@@ -36,7 +36,6 @@ function effectfulGetter (property, n) {
 
 function affectfulGetter (property, argsCount, toAffE) {
     var args = [];
-
     return function (object) {
         function effectRunner () {
             return object[property].apply(object, args);
