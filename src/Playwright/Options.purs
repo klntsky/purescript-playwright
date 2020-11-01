@@ -2,10 +2,11 @@ module Playwright.Options where
 
 import Playwright.Data
 
-import Foreign.Object (Object)
+import Data.String.Regex (Regex)
 import Foreign (Foreign)
-import Untagged.Union (UndefinedOr, type (|+|))
+import Foreign.Object (Object)
 import Literals.Null (Null)
+import Untagged.Union (UndefinedOr, type (|+|))
 
 type Opt a = UndefinedOr a
 
@@ -92,4 +93,30 @@ type ClickOptions =
   , force       :: Opt Boolean
   , noWaitAfter :: Opt Boolean
   , timeout     :: Opt Int
+  }
+
+type MouseClickOptions =
+  { button     :: Opt MouseButton
+  , clickCount :: Opt Int
+  , delay      :: Opt Int
+  }
+
+type MouseDblClickOptions =
+  { button     :: Opt MouseButton
+  , delay      :: Opt Int
+  }
+
+type MouseUpDownOptions =
+  { button     :: Opt MouseButton
+  , clickCount :: Opt Int
+  }
+
+type MouseMoveOptions =
+  { steps :: Opt Int
+  }
+
+type WaitForNavigationOptions =
+  { timeout   :: Opt Int
+  , url       :: Opt (String |+| Regex |+| URL -> Boolean)
+  , waitUntil :: Opt WaitUntil
   }

@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script>
+      function setEventTester (event) {
+          var div = document.createElement('div');
+          div.textContent = event;
+          div.id = 'event-' + event;
+          document.body.appendChild(div);
+          div.addEventListener(event, function () {
+              div.textContent = 'OK';
+          });
+      }
+
+      function checkEventHappened (event) {
+          var elem = document.getElementById('event-' + event);
+          return elem && elem.textContent == 'OK';
+      }
+    </script>
   </head>
   <body>
     <div id="someid"></div>

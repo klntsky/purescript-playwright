@@ -11,7 +11,7 @@ import Data.Maybe (Maybe(..))
 import Node.FS.Aff as FS
 import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
-import Control.Monad.Error.Class (withResource)
+import TestUtils
 
 static :: String -> URL
 static file =
@@ -19,7 +19,9 @@ static file =
 
 main :: Effect Unit
 main = runTest do
-  let hello = static "hello.html"
+  let
+   hello = static "hello.html"
+   index = static "index.html"
   suite "browser" do
     test "launch, close" do
       browser <- launch chromium {}
@@ -56,19 +58,7 @@ main = runTest do
           frame <- liftEffect $ mainFrame page
           frameName <- liftEffect $ name frame
           Assert.equal "" frameName
-
-withBrowser :: forall a. (Browser -> Aff a) -> Aff a
-withBrowser action = withResource acquire release action
-  where
-    acquire = launch chromium {}
-    release = close
-
-withBrowserPage :: forall a. URL -> (Page -> Aff a) -> Aff a
-withBrowserPage url action = do
-  withBrowser
-    \browser -> do
-      page <- newPage browser {}
-      void $ goto page url {}
-      action page
-
-foreign import cwd :: String
+    test "click" do
+      withBrowserPage index $ testClickEvent "click" click
+    test "dblclick" do
+      withBrowserPage index $ testClickEvent "dblclick" dblclick

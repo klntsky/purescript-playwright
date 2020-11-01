@@ -26,6 +26,9 @@ module Playwright
     , click
     , content
     , dblclick
+    , waitForNavigation
+    , evaluateHandle
+    , evaluate
     , module Playwright.Data
     , module Playwright.Options
     )
@@ -41,6 +44,8 @@ import Playwright.Options
 import Prelude
 import Untagged.Coercible (class Coercible)
 import Untagged.Union (type (|+|), UndefinedOr)
+import Foreign (Foreign)
+import Data.String.Regex (Regex)
 
 launch
   :: forall o
@@ -252,3 +257,36 @@ dblclick
 dblclick x s o =
   affCall "dblclick" typeInfo x s o
   where typeInfo _ = dblclick
+
+evaluate
+  :: forall x
+  .  Coercible x (Page |+| Frame |+| Worker |+| JSHandle)
+  => x
+  -> String
+  -- ^ Function to be evaluated in browser context
+  -> Aff Foreign
+evaluate x s =
+  affCall "evaluate" typeInfo x s
+  where typeInfo _ = evaluate
+
+evaluateHandle
+  :: forall x
+  .  Coercible x (Page |+| Frame |+| Worker |+| JSHandle)
+  => x
+  -> String
+  -- ^ Function to be evaluated in browser context
+  -> Aff JSHandle
+evaluateHandle x s =
+  affCall "evaluateHandle" typeInfo x s
+  where typeInfo _ = evaluateHandle
+
+waitForNavigation
+  :: forall x o
+  .  Coercible x (Page |+| Frame)
+  => Coercible o WaitForNavigationOptions
+  => x
+  -> o
+  -> Aff (Null |+| Response)
+waitForNavigation x s =
+  affCall "waitForNavigation" typeInfo x s
+  where typeInfo _ = waitForNavigation
