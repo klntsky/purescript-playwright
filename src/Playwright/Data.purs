@@ -2,6 +2,7 @@ module Playwright.Data where
 
 import Prelude
 import Untagged.TypeCheck (class HasRuntimeType)
+import Foreign (Foreign)
 
 foreign import data BrowserType :: Type
 foreign import data Browser :: Type
@@ -63,3 +64,8 @@ foreign import attached :: ElementState
 foreign import detached :: ElementState
 foreign import visible :: ElementState
 foreign import hidden :: ElementState
+
+foreign import data Raf :: Type
+foreign import raf :: Raf
+
+type EvaluationArgument = Foreign

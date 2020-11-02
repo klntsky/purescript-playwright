@@ -14,6 +14,7 @@ import Effect.Class (liftEffect)
 import TestUtils
 import Data.Either
 import Control.Monad.Error.Class
+import Foreign (unsafeToForeign)
 
 static :: String -> URL
 static file =
@@ -71,3 +72,13 @@ main = runTest do
           res <- try $ waitForSelector page (Selector "nonexistent") { timeout: 100 }
           Assert.assert "waitForSelector fails when no element" $
             isLeft res
+    test "waitForFunction" do
+      withBrowserPage hello
+        \page -> do
+          void $ evaluate page
+            "setTimeout(() => document.body.textContent += 'test', 200)"
+          void $ waitForFunction
+            page
+            "x => document.body.textContent.includes(x)"
+            (unsafeToForeign "test")
+            { timeout: 3000 }

@@ -32,6 +32,11 @@ module Playwright
     , waitForRequest
     , waitForResponse
     , waitForSelector
+    , waitForFunction
+    , waitForLoadState
+    , waitForTimeout
+    , pdf
+    , setInputFiles
     , module Playwright.Data
     , module Playwright.Options
     )
@@ -82,24 +87,21 @@ newPage
   => Coercible o NewpageOptions
   => x -> o -> Aff Page
 newPage =
-  affCall "newPage" typeInfo
-  where typeInfo _ = newPage
+  affCall "newPage" \_ -> newPage
 
 goForward
   :: forall o
   .  Coercible o GoOptions
   => Page -> o -> Aff (Null |+| Response)
 goForward =
-  affCall "goForward" typeInfo
-  where typeInfo _ = goForward
+  affCall "goForward" \_ -> goForward
 
 goBack
   :: forall o
   .  Coercible o GoOptions
   => Page -> o -> Aff (Null |+| Response)
 goBack  =
-  affCall "goBack" typeInfo
-  where typeInfo _ = goBack
+  affCall "goBack" \_ -> goBack
 
 goto
   :: forall x o
@@ -107,8 +109,7 @@ goto
   => Coercible o GotoOptions
   => x -> URL -> o -> Aff (Null |+| Response)
 goto =
-  affCall "goto" typeInfo
-  where typeInfo _ = goto
+  affCall "goto" \_ -> goto
 
 type Cookie =
   { name :: String
@@ -304,3 +305,64 @@ waitForSelector
   -> o
   -> Aff (Null |+| ElementHandle)
 waitForSelector = affCall "waitForSelector" \_ -> waitForSelector
+
+waitForFunction
+  :: forall x o
+  .  Coercible x (Page |+| Frame)
+  => Coercible o WaitForFunctionOptions
+  => x
+  -> String
+  -- ^ Function to be evaluated in browser context
+  -> EvaluationArgument
+  -> o
+  -> Aff JSHandle
+waitForFunction = affCall "waitForFunction" \_ -> waitForFunction
+
+waitForLoadState
+  :: forall x o
+  .  Coercible x (Page |+| Frame)
+  => Coercible o WaitForLoadStateOptions
+  => x
+  -> WaitUntil
+  -> o
+  -> Aff Unit
+waitForLoadState = affCall "waitForLoadState" \_ -> waitForLoadState
+
+waitForTimeout
+  :: forall x
+  .  Coercible x (Page |+| Frame)
+  => x
+  -> Int
+  -> Aff Unit
+waitForTimeout = affCall "waitForTimeout" \_ -> waitForTimeout
+
+pdf
+  :: forall o
+  .  Coercible o PdfOptions
+  => Page
+  -> o
+  -> Aff Buffer
+pdf = affCall "pdf" \_ -> pdf
+
+setInputFiles
+  :: forall x o f
+  .  Coercible x (Page |+| Frame |+| ElementHandle)
+  => Coercible o SetInputFilesOptions
+  => Coercible f
+     ( String
+   |+| Array String
+   |+| { name :: String
+       , mimeType :: String
+       , buffer :: Buffer
+       }
+   |+| Array { name :: String
+             , mimeType :: String
+             , buffer :: Buffer
+             }
+     )
+  => x
+  -> Selector
+  -> f
+  -> o
+  -> Aff Unit
+setInputFiles = affCall "setInputFiles" \_ -> setInputFiles

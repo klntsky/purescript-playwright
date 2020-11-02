@@ -133,3 +133,40 @@ type WaitForSelectorOptions =
   { state   :: Opt ElementState
   , timeout :: Opt Int
   }
+
+type WaitForFunctionOptions =
+  { polling :: Opt (Int |+| Raf)
+  , timeout :: Opt Int
+  }
+
+type WaitForLoadStateOptions =
+  { timeout :: Opt Int
+  }
+
+type Margin =
+  { top    :: Opt (String |+| Number)
+  , right  :: Opt (String |+| Number)
+  , bottom :: Opt (String |+| Number)
+  , left   :: Opt (String |+| Number)
+  }
+
+type PdfOptions =
+  { path                :: String
+  , scale               :: Opt Number
+  , displayHeaderFooter :: Opt Boolean
+  , headerTemplate      :: Opt String
+  , footerTemplate      :: Opt String
+  , printBackground     :: Opt Boolean
+  , landscape           :: Opt Boolean
+  , pageRanges          :: Opt String
+  , format              :: Opt String
+  , width               :: Opt (String |+| Number)
+  , height              :: Opt (String |+| Number)
+  , margin              :: Opt Margin
+  , preferCSSPageSize   :: Opt Boolean
+  }
+
+type SetInputFilesOptions =
+  { noWaitAfter :: Opt Boolean
+  , timeout     :: Opt Int
+  }

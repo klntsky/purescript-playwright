@@ -27,3 +27,5 @@ exports.attached = "attached";
 exports.detached = "detached";
 exports.visible = "visible";
 exports.hidden = "hidden";
+
+exports.raf = "raf";
