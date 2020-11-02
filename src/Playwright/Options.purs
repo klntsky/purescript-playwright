@@ -120,3 +120,16 @@ type WaitForNavigationOptions =
   , url       :: Opt (String |+| Regex |+| URL -> Boolean)
   , waitUntil :: Opt WaitUntil
   }
+
+type WaitForRequestOptions =
+  { timeout :: Opt Int
+  }
+
+type WaitForResponseOptions =
+  { timeout :: Opt Int
+  }
+
+type WaitForSelectorOptions =
+  { state   :: Opt ElementState
+  , timeout :: Opt Int
+  }

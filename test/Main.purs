@@ -12,6 +12,8 @@ import Node.FS.Aff as FS
 import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
 import TestUtils
+import Data.Either
+import Control.Monad.Error.Class
 
 static :: String -> URL
 static file =
@@ -62,3 +64,10 @@ main = runTest do
       withBrowserPage index $ testClickEvent "click" click
     test "dblclick" do
       withBrowserPage index $ testClickEvent "dblclick" dblclick
+    test "waitForSelector" do
+      withBrowserPage hello
+        \page -> do
+          void $ waitForSelector page (Selector "body") {}
+          res <- try $ waitForSelector page (Selector "nonexistent") { timeout: 100 }
+          Assert.assert "waitForSelector fails when no element" $
+            isLeft res

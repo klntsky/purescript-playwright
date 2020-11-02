@@ -57,3 +57,9 @@ foreign import data MouseButton :: Type
 foreign import left :: MouseButton
 foreign import right :: MouseButton
 foreign import middle :: MouseButton
+
+foreign import data ElementState :: Type
+foreign import attached :: ElementState
+foreign import detached :: ElementState
+foreign import visible :: ElementState
+foreign import hidden :: ElementState

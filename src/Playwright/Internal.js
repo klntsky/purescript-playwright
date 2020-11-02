@@ -3,6 +3,8 @@
 /**
  * @param {string} property - method to call on object
  * @param {number} n - number of (curried) arguments
+ * @param {effectRunnerWrapper} effectRunnerWrapper - a function to overrride
+ * effect runner with. `toAffE` for `Aff`, `identity` for `Effect`.
  *
  * E.g. these are equivalent:
  *
@@ -14,34 +16,16 @@
  *
  * and
  *
- * effectfulGetter('close', 0);
+ * effectfulGetter('close', 0, identity);
  */
-function effectfulGetter (property, n) {
-    var args = [];
-
-    return function (object) {
-        function runner (arg) {
-            if (n == 0) {
-                return object[property].apply(object, args);
-            } else {
-                args.push(arg);
-                n--;
-                return runner;
-            }
-        }
-
-        return runner;
-    };
-}
-
-function affectfulGetter (property, argsCount, toAffE) {
+function effectfulGetter (property, argsCount, effectRunnerWrapper) {
     var args = [];
     return function (object) {
         function effectRunner () {
             return object[property].apply(object, args);
         }
 
-        var affectRunner = toAffE(effectRunner);
+        var affectRunner = effectRunnerWrapper(effectRunner);
 
         function chooseNext () {
             return argsCount > 0 ? argsConsumer : affectRunner;
@@ -61,17 +45,20 @@ function affectfulGetter (property, argsCount, toAffE) {
     };
 }
 
+function identity (x) {
+    return x;
+}
 
 exports.unsafeEffCall = function (method) {
     return function (argsCount) {
-        return effectfulGetter(method, argsCount);
+        return effectfulGetter(method, argsCount, identity);
     };
 };
 
 exports.unsafeAffCall = function (toAffE) {
     return function (method) {
         return function (argsCount) {
-            return affectfulGetter(method, argsCount, toAffE);
+            return effectfulGetter(method, argsCount, toAffE);
         };
     };
 };

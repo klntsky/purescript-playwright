@@ -26,9 +26,12 @@ module Playwright
     , click
     , content
     , dblclick
-    , waitForNavigation
-    , evaluateHandle
     , evaluate
+    , evaluateHandle
+    , waitForNavigation
+    , waitForRequest
+    , waitForResponse
+    , waitForSelector
     , module Playwright.Data
     , module Playwright.Options
     )
@@ -271,3 +274,33 @@ waitForNavigation
   -> Aff (Null |+| Response)
 waitForNavigation =
   affCall "waitForNavigation" \_ -> waitForNavigation
+
+waitForRequest
+  :: forall url o
+  .  Coercible url (URL |+| Regex |+| URL -> Boolean)
+  => Coercible o WaitForRequestOptions
+  => Page
+  -> url
+  -> o
+  -> Aff Request
+waitForRequest = affCall "waitForRequest" \_ -> waitForRequest
+
+waitForResponse
+  :: forall url o
+  .  Coercible url (URL |+| Regex |+| URL -> Boolean)
+  => Coercible o WaitForResponseOptions
+  => Page
+  -> url
+  -> o
+  -> Aff Response
+waitForResponse = affCall "waitForResponse" \_ -> waitForResponse
+
+waitForSelector
+  :: forall x o
+  .  Coercible x (Page |+| Frame |+| ElementHandle)
+  => Coercible o WaitForSelectorOptions
+  => x
+  -> Selector
+  -> o
+  -> Aff (Null |+| ElementHandle)
+waitForSelector = affCall "waitForSelector" \_ -> waitForSelector

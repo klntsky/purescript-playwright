@@ -22,3 +22,8 @@ exports.null = null;
 exports.left = "left";
 exports.right = "right";
 exports.middle = "middle";
+
+exports.attached = "attached";
+exports.detached = "detached";
+exports.visible = "visible";
+exports.hidden = "hidden";
