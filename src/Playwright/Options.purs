@@ -166,7 +166,7 @@ type PdfOptions =
   , preferCSSPageSize   :: Opt Boolean
   }
 
-type SetInputFilesOptions =
+type SetFilesOptions =
   { noWaitAfter :: Opt Boolean
   , timeout     :: Opt Int
   }

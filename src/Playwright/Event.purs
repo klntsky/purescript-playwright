@@ -53,6 +53,13 @@ instance eventPageDownload :: OnEvent Page Download Data.Download
 download :: EventName Download
 download = EventName
 
+foreign import data FileChooser :: Type
+instance eventFileChooser :: Event FileChooser where
+  getEventName _ = "filechooser"
+instance eventPageFileChooser :: OnEvent Page FileChooser Data.FileChooser
+filechooser :: EventName FileChooser
+filechooser = EventName
+
 on
   :: forall x e a r
   .  OnEvent x e a

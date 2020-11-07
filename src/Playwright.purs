@@ -351,7 +351,7 @@ pdf = affCall "pdf" \_ -> pdf
 setInputFiles
   :: forall x o f
   .  Coercible x (Page |+| Frame |+| ElementHandle)
-  => Coercible o SetInputFilesOptions
+  => Coercible o SetFilesOptions
   => Coercible f
      ( String
    |+| Array String
