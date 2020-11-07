@@ -1,6 +1,7 @@
 { name = "playwright"
 , dependencies =
-  [ "console"
+  [ "argonaut-core"
+  , "console"
   , "effect"
   , "prelude"
   , "psci-support"
