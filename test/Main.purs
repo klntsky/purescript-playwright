@@ -6,7 +6,6 @@ import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Class (liftEffect)
 import Effect.Ref as Ref
-import Foreign (unsafeToForeign)
 import Node.FS.Aff as FS
 import Playwright
 import Playwright.ConsoleMessage as ConsoleMessage
@@ -79,12 +78,11 @@ main = runTest do
       withBrowserPage hello
         \page -> do
           void $ evaluate page
-            "setTimeout(() => document.body.textContent += 'test', 200)"
+            "setTimeout(() => document.body.textContent += 'uniqstring', 1)"
           void $ waitForFunction
             page
-            "x => document.body.textContent.includes(x)"
-            (unsafeToForeign "test")
-            { timeout: 3000 }
+            "document.body.textContent.includes('uniqstring')"
+            { timeout: 5000, polling: 100 }
   suite "events" do
     test "console" do
       withBrowserPage hello
@@ -96,15 +94,7 @@ main = runTest do
           void $ evaluate page
             """
             console.log('hi');
-            setTimeout(() => {
-              document.body.textContent += 'test';
-            }, 100)
             """
-          void $ waitForFunction
-            page
-            "x => document.body.textContent.includes(x)"
-            (unsafeToForeign "test")
-            { timeout: 3000 }
           realMessage <- liftEffect $ Ref.read messageRef
           Assert.equal (Just "hi") realMessage
     test "console: ConsoleMessageType" do
@@ -117,14 +107,6 @@ main = runTest do
           void $ evaluate page
             """
             console.debug('hi');
-            setTimeout(() => {
-              document.body.textContent += 'test';
-            }, 100)
             """
-          void $ waitForFunction
-            page
-            "x => document.body.textContent.includes(x)"
-            (unsafeToForeign "test")
-            { timeout: 3000 }
           realType <- liftEffect $ Ref.read typeRef
           Assert.equal (Just ConsoleMessage.Debug) realType

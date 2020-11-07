@@ -9,6 +9,7 @@
   , "untagged-union"
   , "node-buffer"
   , "node-fs-aff"
+  , "undefined"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

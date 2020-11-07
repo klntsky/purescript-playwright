@@ -67,5 +67,3 @@ foreign import hidden :: ElementState
 
 foreign import data Raf :: Type
 foreign import raf :: Raf
-
-type EvaluationArgument = Foreign

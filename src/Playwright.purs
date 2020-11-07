@@ -47,7 +47,7 @@ where
 import Data.String.Regex (Regex)
 import Effect (Effect)
 import Effect.Aff (Aff)
-import Foreign (Foreign)
+import Foreign (Foreign, unsafeToForeign)
 import Literals.Null (Null)
 import Node.Buffer (Buffer)
 import Playwright.Data
@@ -56,6 +56,7 @@ import Playwright.Options
 import Prelude (Unit)
 import Untagged.Coercible (class Coercible)
 import Untagged.Union (type (|+|), UndefinedOr)
+import Undefined (undefined)
 
 launch
   :: forall o
@@ -315,10 +316,11 @@ waitForFunction
   => x
   -> String
   -- ^ Function to be evaluated in browser context
-  -> EvaluationArgument
   -> o
   -> Aff JSHandle
-waitForFunction = affCall "waitForFunction" \_ -> waitForFunction
+waitForFunction x s o = waitForFunction' x s (unsafeToForeign undefined) o
+  where
+    waitForFunction' = affCall "waitForFunction" \_ -> waitForFunction'
 
 waitForLoadState
   :: forall x o
