@@ -1,20 +1,23 @@
 module Test.Main where
 
-import Prelude
-import Playwright
-import Effect (Effect)
-import Test.Unit (suite, test)
-import Test.Unit.Main (runTest)
-import Untagged.Union (fromOneOf)
-import Test.Unit.Assert as Assert
+import Control.Monad.Error.Class (try)
+import Data.Either (isLeft)
 import Data.Maybe (Maybe(..))
-import Node.FS.Aff as FS
-import Effect.Aff (Aff)
+import Effect (Effect)
 import Effect.Class (liftEffect)
-import TestUtils
-import Data.Either
-import Control.Monad.Error.Class
+import Effect.Ref as Ref
 import Foreign (unsafeToForeign)
+import Node.FS.Aff as FS
+import Playwright
+import Playwright.ConsoleMessage as ConsoleMessage
+import Playwright.Event as Event
+import Playwright.Event (on)
+import Prelude (Unit, bind, discard, void, ($), (/=), (<>), (=<<))
+import Test.Unit (suite, test)
+import Test.Unit.Assert as Assert
+import Test.Unit.Main (runTest)
+import TestUtils (cwd, testClickEvent, withBrowser, withBrowserPage)
+import Untagged.Union (fromOneOf)
 
 static :: String -> URL
 static file =
@@ -82,3 +85,46 @@ main = runTest do
             "x => document.body.textContent.includes(x)"
             (unsafeToForeign "test")
             { timeout: 3000 }
+  suite "events" do
+    test "console" do
+      withBrowserPage hello
+        \page -> do
+          messageRef <- liftEffect $ Ref.new Nothing
+          liftEffect $ on Event.console page $ \cslMessage -> do
+            realMessage <- ConsoleMessage.text cslMessage
+            Ref.write (Just realMessage) messageRef
+          void $ evaluate page
+            """
+            console.log('hi');
+            setTimeout(() => {
+              document.body.textContent += 'test';
+            }, 100)
+            """
+          void $ waitForFunction
+            page
+            "x => document.body.textContent.includes(x)"
+            (unsafeToForeign "test")
+            { timeout: 3000 }
+          realMessage <- liftEffect $ Ref.read messageRef
+          Assert.equal (Just "hi") realMessage
+    test "console: ConsoleMessageType" do
+      withBrowserPage hello
+        \page -> do
+          typeRef <- liftEffect $ Ref.new Nothing
+          liftEffect $ on Event.console page $ \cslMessage -> do
+            realType <- ConsoleMessage.type' cslMessage
+            Ref.write (Just realType) typeRef
+          void $ evaluate page
+            """
+            console.debug('hi');
+            setTimeout(() => {
+              document.body.textContent += 'test';
+            }, 100)
+            """
+          void $ waitForFunction
+            page
+            "x => document.body.textContent.includes(x)"
+            (unsafeToForeign "test")
+            { timeout: 3000 }
+          realType <- liftEffect $ Ref.read typeRef
+          Assert.equal (Just ConsoleMessage.Debug) realType

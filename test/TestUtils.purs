@@ -1,11 +1,18 @@
-module TestUtils where
+module TestUtils
+       ( assertForeignTrue
+       , withBrowser
+       , withBrowserPage
+       , testClickEvent
+       , cwd
+       )
+where
 
 import Test.Unit.Assert as Assert
-import Foreign
-import Control.Monad.Except
-import Data.Either
-import Effect.Aff
-import Prelude
+import Foreign (Foreign, readBoolean)
+import Control.Monad.Except (runExcept)
+import Data.Either (Either(..))
+import Effect.Aff (Aff)
+import Prelude (Unit, bind, discard, void, ($), (<>), (==))
 import Playwright
 import Control.Monad.Error.Class (withResource)
 

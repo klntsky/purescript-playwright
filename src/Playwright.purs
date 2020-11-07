@@ -37,23 +37,25 @@ module Playwright
     , waitForTimeout
     , pdf
     , setInputFiles
+    , setViewportSize
+    , title
     , module Playwright.Data
     , module Playwright.Options
     )
 where
 
+import Data.String.Regex (Regex)
 import Effect (Effect)
 import Effect.Aff (Aff)
+import Foreign (Foreign)
 import Literals.Null (Null)
 import Node.Buffer (Buffer)
 import Playwright.Data
 import Playwright.Internal (effCall, effProp, affCall)
 import Playwright.Options
-import Prelude
+import Prelude (Unit)
 import Untagged.Coercible (class Coercible)
 import Untagged.Union (type (|+|), UndefinedOr)
-import Foreign (Foreign)
-import Data.String.Regex (Regex)
 
 launch
   :: forall o
@@ -366,3 +368,18 @@ setInputFiles
   -> o
   -> Aff Unit
 setInputFiles = affCall "setInputFiles" \_ -> setInputFiles
+
+setViewportSize
+  :: Page
+  -> { width  :: Number
+     , height :: Number
+     }
+  ->  Aff Unit
+setViewportSize = affCall "setViewportSize" \_ -> setViewportSize
+
+title
+  :: forall x
+  .  Coercible x (Page |+| Frame)
+  => x
+  -> Aff String
+title = affCall "title" \_ -> title
