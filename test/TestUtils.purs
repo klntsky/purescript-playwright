@@ -4,6 +4,7 @@ module TestUtils
        , withBrowserPage
        , testClickEvent
        , cwd
+       , isNull
        )
 where
 
@@ -33,7 +34,7 @@ withBrowserPage url action = do
   withBrowser
     \browser -> do
       let
-        acquire = newPage browser {}
+        acquire = newPage browser { acceptDownloads: true }
         release = close
       withResource acquire release
         \page -> do
@@ -46,5 +47,7 @@ testClickEvent event action page = do
   action page (Selector $ "#event-" <> event) {}
   result <- evaluate page $ "checkEventHappened('" <> event <> "');"
   assertForeignTrue result
+
+foreign import isNull :: forall a. a -> Boolean
 
 foreign import cwd :: String

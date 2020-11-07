@@ -1,21 +1,25 @@
 module Test.Main where
 
-import Control.Monad.Error.Class (try)
 import Data.Either (isLeft)
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
+import Effect.Aff (launchAff_, try)
 import Effect.Class (liftEffect)
 import Effect.Ref as Ref
+import Node.Encoding as Encoding
 import Node.FS.Aff as FS
+import Node.Stream as Stream
 import Playwright
 import Playwright.ConsoleMessage as ConsoleMessage
-import Playwright.Event as Event
+import Playwright.Dialog as Dialog
+import Playwright.Download as Download
 import Playwright.Event (on)
-import Prelude (Unit, bind, discard, void, ($), (/=), (<>), (=<<))
+import Playwright.Event as Event
+import Prelude
 import Test.Unit (suite, test)
 import Test.Unit.Assert as Assert
 import Test.Unit.Main (runTest)
-import TestUtils (cwd, testClickEvent, withBrowser, withBrowserPage)
+import TestUtils (cwd, isNull, testClickEvent, withBrowser, withBrowserPage)
 import Untagged.Union (fromOneOf)
 
 static :: String -> URL
@@ -110,3 +114,47 @@ main = runTest do
             """
           realType <- liftEffect $ Ref.read typeRef
           Assert.equal (Just ConsoleMessage.Debug) realType
+    test "download" do
+      withBrowserPage hello
+        \page -> do
+          downloadRef <- liftEffect $ Ref.new Nothing
+          liftEffect $ on Event.download page $ \download -> launchAff_ do
+            fname <- liftEffect $ Download.suggestedFilename download
+            Assert.equal "hello.txt" fname
+            mbStream <- Download.createReadStream download
+            failureStatus <- Download.failure download
+            Assert.equal true (isNull failureStatus)
+            case mbStream of
+              Nothing -> Assert.assert "Unable to get stream" false
+              Just stream -> do
+                liftEffect $ Stream.onDataString stream Encoding.UTF8 $ \string -> do
+                  Ref.write (Just string) downloadRef
+          void $ evaluate page
+            """
+            function download(filename, text) {
+              var element = document.createElement('a');
+              element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+              element.setAttribute('download', filename);
+              document.body.appendChild(element);
+              element.click();
+              document.body.removeChild(element);
+            }
+            download("hello.txt","hiiii");
+            """
+          waitForTimeout page 100
+          downloadContent <- liftEffect $ Ref.read downloadRef
+          Assert.equal (Just "hiiii") downloadContent
+    test "dialog" do
+      withBrowserPage hello
+        \page -> do
+          downloadRef <- liftEffect $ Ref.new Nothing
+          liftEffect $ on Event.dialog page $ \dialog -> launchAff_ do
+            defaultValue <- liftEffect $ Dialog.defaultValue dialog
+            Assert.equal "hello" defaultValue
+            message <- liftEffect $ Dialog.message dialog
+            Assert.equal "hi" message
+            Dialog.dismiss dialog
+          void $ evaluate page
+            """
+            prompt("hi", "hello");
+            """
