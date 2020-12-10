@@ -27,7 +27,7 @@ foreign import createReadStream_
   :: (forall a. Maybe a)
   -> (forall a. a -> Maybe a)
   -> Download
-   -> Effect (Promise (Maybe (Readable ())))
+  -> Effect (Promise (Maybe (Readable ())))
 
 suggestedFilename :: Download -> Effect String
 suggestedFilename = effCall "suggestedFilename" \_ -> suggestedFilename

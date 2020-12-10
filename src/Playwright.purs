@@ -39,11 +39,13 @@ module Playwright
     , setInputFiles
     , setViewportSize
     , title
+    , exposeBinding
     , module Playwright.Data
     , module Playwright.Options
     )
 where
 
+import Control.Promise (Promise, fromAff, toAffE)
 import Data.String.Regex (Regex)
 import Effect (Effect)
 import Effect.Aff (Aff)
@@ -53,10 +55,10 @@ import Node.Buffer (Buffer)
 import Playwright.Data
 import Playwright.Internal (effCall, effProp, affCall)
 import Playwright.Options
-import Prelude (Unit)
+import Prelude (Unit, ($))
+import Undefined (undefined)
 import Untagged.Coercible (class Coercible)
 import Untagged.Union (type (|+|), UndefinedOr)
-import Undefined (undefined)
 
 launch
   :: forall o
@@ -137,7 +139,7 @@ hover =
 
 innerHTML
   :: forall x o
-  .  Coercible x (Page |+| Frame |+| ElementHandle)
+  .  Coercible x (Page |+| Frame)
   => Coercible o InnerHTMLOptions
   => x -> Selector -> o -> Aff String
 innerHTML =
@@ -170,7 +172,7 @@ name = effCall "name" \_ -> name
 query
   :: forall x
   .  Coercible x (ElementHandle |+| Page |+| Frame)
-  => x -> Selector -> Aff ElementHandle
+  => x -> Selector -> Aff (Null |+| ElementHandle)
 query =
   affCall "$" \_ -> query
 
@@ -221,7 +223,7 @@ clearCookies =
 
 click
   :: forall x o
-  .  Coercible x (Page |+| Frame |+| ElementHandle)
+  .  Coercible x (Page |+| Frame)
   => Coercible o ClickOptions
   => x
   -> Selector
@@ -385,3 +387,38 @@ title
   => x
   -> Aff String
 title = affCall "title" \_ -> title
+
+exposeBinding
+  :: forall x b
+  .  Coercible x (Page |+| BrowserContext)
+  => x
+  -> String
+  -- ^ Name of the function on the window object.
+  ->
+  (
+    { browserContext :: BrowserContext
+    , page :: Page
+    , frame :: Frame
+    }
+    -> Foreign
+    -> Aff b
+  )
+  -> Aff Unit
+exposeBinding x binding f =
+  toAffE $ exposeBinding_ x binding (\d a -> fromAff $ f d a) { handle: false }
+
+foreign import exposeBinding_
+  :: forall x a b
+  .  x
+  -> String
+  ->
+  (
+    { browserContext :: BrowserContext
+    , page :: Page
+    , frame :: Frame
+    }
+    -> a
+    -> Effect (Promise b)
+  )
+  -> { handle :: Boolean }
+  -> Effect (Promise Unit)

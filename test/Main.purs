@@ -1,11 +1,14 @@
 module Test.Main where
 
+import Control.Monad.Except (runExcept)
 import Data.Either (isLeft)
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Aff (launchAff_, try)
 import Effect.Class (liftEffect)
+import Effect.Console as Console
 import Effect.Ref as Ref
+import Foreign as Foreign
 import Node.Encoding as Encoding
 import Node.FS.Aff as FS
 import Node.Stream as Stream
@@ -87,6 +90,27 @@ main = runTest do
             page
             "document.body.textContent.includes('uniqstring')"
             { timeout: 5000, polling: 100 }
+  suite "FFI" do
+    test "exposeBinding" do
+      withBrowserPage hello \page -> do
+        ref <- liftEffect $ Ref.new Nothing
+        frgnRef <- liftEffect $ Ref.new Nothing
+        exposeBinding page "hi_ffi"
+          (
+            \({frame}) frgn -> do
+              url <- liftEffect $ url frame
+              liftEffect do
+                Console.log "hi"
+                Ref.write (Just frgn) frgnRef
+                Ref.write (Just url) ref
+          )
+        void $ evaluate page "hi_ffi(12);"
+        waitForTimeout page 100
+        mbUrl <- liftEffect $ Ref.read ref
+        mbForeign <- liftEffect $ Ref.read frgnRef
+        Assert.equal (Just hello) mbUrl
+        Assert.assert "exposeBinding is not able to accept an argument" $
+          pure (pure 12) == (runExcept <<< Foreign.readInt <$> mbForeign)
   suite "events" do
     test "console" do
       withBrowserPage hello
@@ -147,7 +171,6 @@ main = runTest do
     test "dialog" do
       withBrowserPage hello
         \page -> do
-          downloadRef <- liftEffect $ Ref.new Nothing
           liftEffect $ on Event.dialog page $ \dialog -> launchAff_ do
             defaultValue <- liftEffect $ Dialog.defaultValue dialog
             Assert.equal "hello" defaultValue
