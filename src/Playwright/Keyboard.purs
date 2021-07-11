@@ -1,12 +1,11 @@
 module Playwright.Keyboard where
 
 import Prelude
-import Playwright.Internal (effCall, affCall)
+import Playwright.Internal (affCall)
 import Playwright.Data (Keyboard)
 import Playwright.Options (KeyboardPressOptions)
 import Effect.Aff (Aff)
-import Control.Promise (toAffE)
-import Untagged.Coercible (class Coercible, coerce)
+import Untagged.Castable (class Castable)
 
 type Key = String
 
@@ -20,14 +19,14 @@ insertText =
 
 press
   :: forall o
-  .  Coercible o KeyboardPressOptions
+  .  Castable o KeyboardPressOptions
   => Keyboard -> Key -> o -> Aff Unit
 press =
   affCall "press" \_ -> press
 
 type'
   :: forall o
-  .  Coercible o KeyboardPressOptions
+  .  Castable o KeyboardPressOptions
   => Keyboard -> String -> o -> Aff Unit
 type' =
   affCall "type" \_ -> type'

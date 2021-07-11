@@ -7,7 +7,7 @@ import Playwright.Data (ElementHandle, FileChooser, Page)
 import Playwright.Internal (affCall, effCall)
 import Playwright.Options (SetFilesOptions)
 import Prelude
-import Untagged.Coercible (class Coercible)
+import Untagged.Castable (class Castable)
 import Untagged.Union (type (|+|))
 
 element :: FileChooser -> Effect ElementHandle
@@ -21,8 +21,8 @@ page = effCall "page" \_ -> page
 
 setFiles
   :: forall o f
-  .  Coercible o SetFilesOptions
-  => Coercible f
+  .  Castable o SetFilesOptions
+  => Castable f
      ( String
    |+| Array String
    |+| { name :: String

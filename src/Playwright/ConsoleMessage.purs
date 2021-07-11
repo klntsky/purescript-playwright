@@ -5,7 +5,7 @@ import Playwright.Data (ConsoleMessage, JSHandle, URL)
 import Effect (Effect)
 import Playwright.Internal (effCall)
 import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Show (genericShow)
+-- import Data.Generic.Rep.Show (genericShow)
 import Data.String.Common (toLower)
 
 type ConsoleMessageLocation =
@@ -23,7 +23,8 @@ derive instance genericConsoleMessageType :: Generic ConsoleMessageType _
 derive instance eqConsoleMessageType :: Eq ConsoleMessageType
 
 instance showConsoleMessageType :: Show ConsoleMessageType where
-  show = toLower <<< genericShow
+  -- show = toLower <<< genericShow
+  show = const "TODO"
 
 args :: ConsoleMessage -> Effect (Array JSHandle)
 args = effCall "args" \_ -> args
