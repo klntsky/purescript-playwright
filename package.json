@@ -7,7 +7,7 @@
     "test": "test"
   },
   "dependencies": {
-    "playwright": "^1.3.0"
+    "playwright": "^1.12.0"
   },
   "devDependencies": {},
   "scripts": {
