@@ -57,19 +57,19 @@ import Playwright.Internal (effCall, effProp, affCall)
 import Playwright.Options
 import Prelude (Unit, ($))
 import Undefined (undefined)
-import Untagged.Coercible (class Coercible)
+import Untagged.Castable (class Castable)
 import Untagged.Union (type (|+|), UndefinedOr)
 
 launch
   :: forall o
-  .  Coercible o LaunchOptions
+  .  Castable o LaunchOptions
   => BrowserType -> o -> Aff Browser
 launch =
   affCall "launch" \_ -> launch
 
 close
   :: forall x
-  .  Coercible x (Browser |+| BrowserContext |+| Page)
+  .  Castable x (Browser |+| BrowserContext |+| Page)
   => x -> Aff Unit
 close =
   affCall "close" \_ -> close
@@ -88,30 +88,30 @@ version =
 
 newPage
   :: forall x o
-  .  Coercible x (Browser |+| BrowserContext)
-  => Coercible o NewpageOptions
+  .  Castable x (Browser |+| BrowserContext)
+  => Castable o NewpageOptions
   => x -> o -> Aff Page
 newPage =
   affCall "newPage" \_ -> newPage
 
 goForward
   :: forall o
-  .  Coercible o GoOptions
+  .  Castable o GoOptions
   => Page -> o -> Aff (Null |+| Response)
 goForward =
   affCall "goForward" \_ -> goForward
 
 goBack
   :: forall o
-  .  Coercible o GoOptions
+  .  Castable o GoOptions
   => Page -> o -> Aff (Null |+| Response)
 goBack  =
   affCall "goBack" \_ -> goBack
 
 goto
   :: forall x o
-  .  Coercible x (Page |+| Frame)
-  => Coercible o GotoOptions
+  .  Castable x (Page |+| Frame)
+  => Castable o GotoOptions
   => x -> URL -> o -> Aff (Null |+| Response)
 goto =
   affCall "goto" \_ -> goto
@@ -131,24 +131,24 @@ addCookies =
 
 hover
   :: forall x o
-  .  Coercible x (Page |+| Frame |+| ElementHandle)
-  => Coercible o HoverOptions
+  .  Castable x (Page |+| Frame |+| ElementHandle)
+  => Castable o HoverOptions
   => x -> o -> Aff Unit
 hover =
   affCall "hover" \_ -> hover
 
 innerHTML
   :: forall x o
-  .  Coercible x (Page |+| Frame)
-  => Coercible o InnerHTMLOptions
+  .  Castable x (Page |+| Frame)
+  => Castable o InnerHTMLOptions
   => x -> Selector -> o -> Aff String
 innerHTML =
   affCall "innerHTML" \_ -> innerHTML
 
 innerText
   :: forall x o
-  .  Coercible o InnerTextOptions
-  => Coercible x (Page |+| Frame |+| ElementHandle)
+  .  Castable o InnerTextOptions
+  => Castable x (Page |+| Frame |+| ElementHandle)
   => x
   -> Selector
   -> o
@@ -171,7 +171,7 @@ name = effCall "name" \_ -> name
 -- | `sth.$(selector)`
 query
   :: forall x
-  .  Coercible x (ElementHandle |+| Page |+| Frame)
+  .  Castable x (ElementHandle |+| Page |+| Frame)
   => x -> Selector -> Aff (Null |+| ElementHandle)
 query =
   affCall "$" \_ -> query
@@ -179,29 +179,29 @@ query =
 -- | `sth.$$(selector)`
 queryMany
   :: forall x
-  .  Coercible x (ElementHandle |+| Page |+| Frame)
+  .  Castable x (ElementHandle |+| Page |+| Frame)
   => x -> Selector -> Aff (Array ElementHandle)
 queryMany =
   affCall "$$" \_ -> queryMany
 
 screenshot
   :: forall x o
-  .  Coercible x (ElementHandle |+| Page)
-  => Coercible o ScreenshotOptions
+  .  Castable x (ElementHandle |+| Page)
+  => Castable o ScreenshotOptions
   => x -> o -> Aff Buffer
 screenshot =
   affCall "screenshot" \_ -> screenshot
 
 textContent
   :: forall x
-  .  Coercible x (Page |+| Frame |+| ElementHandle)
+  .  Castable x (Page |+| Frame |+| ElementHandle)
   => x -> Selector -> Aff (Null |+| String)
 textContent =
   affCall "textContent" \_ -> textContent
 
 url
   :: forall x
-  .  Coercible x (Page |+| Frame |+| Download |+| Request |+| Response |+| Worker)
+  .  Castable x (Page |+| Frame |+| Download |+| Request |+| Response |+| Worker)
   => x
   -> Effect URL
 url =
@@ -209,8 +209,8 @@ url =
 
 addInitScript
   :: forall x o
-  .  Coercible x (Page |+| BrowserContext)
-  => Coercible o AddInitScriptOptions
+  .  Castable x (Page |+| BrowserContext)
+  => Castable o AddInitScriptOptions
   => x
   -> o
   -> Aff Unit
@@ -223,8 +223,8 @@ clearCookies =
 
 click
   :: forall x o
-  .  Coercible x (Page |+| Frame)
-  => Coercible o ClickOptions
+  .  Castable x (Page |+| Frame)
+  => Castable o ClickOptions
   => x
   -> Selector
   -> o
@@ -234,7 +234,7 @@ click =
 
 content
   :: forall x
-  . Coercible x (Page |+| Frame)
+  . Castable x (Page |+| Frame)
   => x
   -> Aff String
 content =
@@ -242,8 +242,8 @@ content =
 
 dblclick
   :: forall x o
-  .  Coercible x (Page |+| Frame |+| ElementHandle)
-  => Coercible o ClickOptions
+  .  Castable x (Page |+| Frame |+| ElementHandle)
+  => Castable o ClickOptions
   => x
   -> Selector
   -> o
@@ -253,7 +253,7 @@ dblclick =
 
 evaluate
   :: forall x
-  .  Coercible x (Page |+| Frame |+| Worker |+| JSHandle)
+  .  Castable x (Page |+| Frame |+| Worker |+| JSHandle)
   => x
   -> String
   -- ^ Function to be evaluated in browser context
@@ -263,7 +263,7 @@ evaluate =
 
 evaluateHandle
   :: forall x
-  .  Coercible x (Page |+| Frame |+| Worker |+| JSHandle)
+  .  Castable x (Page |+| Frame |+| Worker |+| JSHandle)
   => x
   -> String
   -- ^ Function to be evaluated in browser context
@@ -273,8 +273,8 @@ evaluateHandle =
 
 waitForNavigation
   :: forall x o
-  .  Coercible x (Page |+| Frame)
-  => Coercible o WaitForNavigationOptions
+  .  Castable x (Page |+| Frame)
+  => Castable o WaitForNavigationOptions
   => x
   -> o
   -> Aff (Null |+| Response)
@@ -283,8 +283,8 @@ waitForNavigation =
 
 waitForRequest
   :: forall url o
-  .  Coercible url (URL |+| Regex |+| URL -> Boolean)
-  => Coercible o WaitForRequestOptions
+  .  Castable url (URL |+| Regex |+| URL -> Boolean)
+  => Castable o WaitForRequestOptions
   => Page
   -> url
   -> o
@@ -293,8 +293,8 @@ waitForRequest = affCall "waitForRequest" \_ -> waitForRequest
 
 waitForResponse
   :: forall url o
-  .  Coercible url (URL |+| Regex |+| URL -> Boolean)
-  => Coercible o WaitForResponseOptions
+  .  Castable url (URL |+| Regex |+| URL -> Boolean)
+  => Castable o WaitForResponseOptions
   => Page
   -> url
   -> o
@@ -303,8 +303,8 @@ waitForResponse = affCall "waitForResponse" \_ -> waitForResponse
 
 waitForSelector
   :: forall x o
-  .  Coercible x (Page |+| Frame |+| ElementHandle)
-  => Coercible o WaitForSelectorOptions
+  .  Castable x (Page |+| Frame |+| ElementHandle)
+  => Castable o WaitForSelectorOptions
   => x
   -> Selector
   -> o
@@ -313,8 +313,8 @@ waitForSelector = affCall "waitForSelector" \_ -> waitForSelector
 
 waitForFunction
   :: forall x o
-  .  Coercible x (Page |+| Frame)
-  => Coercible o WaitForFunctionOptions
+  .  Castable x (Page |+| Frame)
+  => Castable o WaitForFunctionOptions
   => x
   -> String
   -- ^ Function to be evaluated in browser context
@@ -326,8 +326,8 @@ waitForFunction x s o = waitForFunction' x s (unsafeToForeign undefined) o
 
 waitForLoadState
   :: forall x o
-  .  Coercible x (Page |+| Frame)
-  => Coercible o WaitForLoadStateOptions
+  .  Castable x (Page |+| Frame)
+  => Castable o WaitForLoadStateOptions
   => x
   -> WaitUntil
   -> o
@@ -336,7 +336,7 @@ waitForLoadState = affCall "waitForLoadState" \_ -> waitForLoadState
 
 waitForTimeout
   :: forall x
-  .  Coercible x (Page |+| Frame)
+  .  Castable x (Page |+| Frame)
   => x
   -> Int
   -> Aff Unit
@@ -344,7 +344,7 @@ waitForTimeout = affCall "waitForTimeout" \_ -> waitForTimeout
 
 pdf
   :: forall o
-  .  Coercible o PdfOptions
+  .  Castable o PdfOptions
   => Page
   -> o
   -> Aff Buffer
@@ -352,9 +352,9 @@ pdf = affCall "pdf" \_ -> pdf
 
 setInputFiles
   :: forall x o f
-  .  Coercible x (Page |+| Frame |+| ElementHandle)
-  => Coercible o SetFilesOptions
-  => Coercible f
+  .  Castable x (Page |+| Frame |+| ElementHandle)
+  => Castable o SetFilesOptions
+  => Castable f
      ( String
    |+| Array String
    |+| { name :: String
@@ -383,14 +383,14 @@ setViewportSize = affCall "setViewportSize" \_ -> setViewportSize
 
 title
   :: forall x
-  .  Coercible x (Page |+| Frame)
+  .  Castable x (Page |+| Frame)
   => x
   -> Aff String
 title = affCall "title" \_ -> title
 
 exposeBinding
   :: forall x b
-  .  Coercible x (Page |+| BrowserContext)
+  .  Castable x (Page |+| BrowserContext)
   => x
   -> String
   -- ^ Name of the function on the window object.

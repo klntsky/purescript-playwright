@@ -19,7 +19,7 @@ dispose :: JSHandle -> Aff Unit
 dispose = affCall "dispose" \_ -> dispose
 
 getProperties :: JSHandle -> Aff (Map String JSHandle)
-getProperties = toAffE <<< getProperties_ Map.insert mempty
+getProperties = toAffE <<< getProperties_ Map.insert Map.empty
 
 getProperty :: JSHandle -> Aff JSHandle
 getProperty = affCall "getProperty" \_ -> getProperty

@@ -1,5 +1,5 @@
 let upstream =
-      https://github.com/purescript/package-sets/releases/download/psc-0.13.8-20200911-2/packages.dhall sha256:872c06349ed9c8210be43982dc6466c2ca7c5c441129826bcb9bf3672938f16e
+      https://github.com/purescript/package-sets/releases/download/psc-0.14.2-20210629/packages.dhall sha256:534c490bb73cae75adb5a39871142fd8db5c2d74c90509797a80b8bb0d5c3f7b
 
 let overrides =
       { untagged-union =
@@ -12,13 +12,12 @@ let overrides =
           , "literals"
           , "maybe"
           , "newtype"
-          , "proxy"
           , "psci-support"
           , "tuples"
           , "unsafe-coerce"
           ]
         , repo = "https://github.com/jvliwanag/purescript-untagged-union.git"
-        , version = "edc091a1fde2cb6ac775865ee6e761b2fb99fc22"
+        , version = "v0.3.0"
         }
       }
 

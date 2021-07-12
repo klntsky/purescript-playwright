@@ -5,7 +5,7 @@ import Playwright.Data (ConsoleMessage, JSHandle, URL)
 import Effect (Effect)
 import Playwright.Internal (effCall)
 import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Show (genericShow)
+import Data.Show.Generic (genericShow)
 import Data.String.Common (toLower)
 
 type ConsoleMessageLocation =
