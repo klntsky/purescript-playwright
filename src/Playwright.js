@@ -1,5 +1,15 @@
 /* global exports */
 
+exports.onResponse = function (page) {
+    return function (cb) {
+        return function () {
+            page.on('response', function (response) {
+                cb(response)();
+            });
+        };
+    };
+};
+
 exports.exposeBinding_ = function (x) {
     return function (name) {
         return function (cb) {
@@ -12,4 +22,8 @@ exports.exposeBinding_ = function (x) {
             };
         };
     };
+};
+
+exports.context = function (page) {
+    return page.context();
 };

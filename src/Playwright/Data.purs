@@ -3,6 +3,10 @@ module Playwright.Data where
 import Prelude
 import Untagged.TypeCheck (class HasRuntimeType)
 import Foreign (Foreign)
+import Data.Argonaut (class EncodeJson, fromString, class DecodeJson)
+import Data.Argonaut.Decode.Decoders (decodeString)
+import Data.Either (Either(..))
+import Data.Argonaut.Decode.Error (JsonDecodeError(..))
 
 foreign import data BrowserType :: Type
 foreign import data Browser :: Type
@@ -67,3 +71,25 @@ foreign import hidden :: ElementState
 
 foreign import data Raf :: Type
 foreign import raf :: Raf
+
+foreign import data SameSite :: Type
+foreign import strict :: SameSite
+foreign import lax :: SameSite
+foreign import none :: SameSite
+
+instance showSameSite :: Show (SameSite) where
+  show strict = "Strict"
+  show lax = "Lax"
+  show none = "None"
+
+instance EncodeJson SameSite where
+  encodeJson strict = fromString "Strict"
+  encodeJson lax = fromString "Lax"
+  encodeJson none = fromString "None"
+
+instance DecodeJson SameSite where
+  decodeJson = decodeString >=> case _ of
+    "Lax" -> pure lax
+    "Strict" -> pure strict
+    "None" -> pure none
+    s -> Left $ UnexpectedValue $ fromString s

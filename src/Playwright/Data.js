@@ -29,3 +29,7 @@ exports.visible = "visible";
 exports.hidden = "hidden";
 
 exports.raf = "raf";
+
+exports.strict = "Strict";
+exports.lax = "Lax";
+exports.none = "None";
