@@ -56,9 +56,9 @@ import Playwright.Data
 import Playwright.Internal (effCall, effProp, affCall)
 import Playwright.Options
 import Prelude (Unit, ($))
-import Undefined (undefined)
 import Untagged.Castable (class Castable)
 import Untagged.Union (type (|+|), UndefinedOr)
+import Literals.Undefined (undefined)
 
 launch
   :: forall o
