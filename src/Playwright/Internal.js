@@ -2,7 +2,7 @@
 
 /**
  * @param {string} property - method to call on object
- * @param {number} n - number of (curried) arguments
+ * @param {number} argsCount - number of (curried) arguments
  * @param {effectRunnerWrapper} effectRunnerWrapper - a function to overrride
  * effect runner with. `toAffE` for `Aff`, `identity` for `Effect`.
  *
@@ -49,13 +49,13 @@ function identity (x) {
     return x;
 }
 
-exports.unsafeEffCall = function (method) {
+export function unsafeEffCall (method) {
     return function (argsCount) {
         return effectfulGetter(method, argsCount, identity);
     };
 };
 
-exports.unsafeAffCall = function (toAffE) {
+export function unsafeAffCall (toAffE) {
     return function (method) {
         return function (argsCount) {
             return effectfulGetter(method, argsCount, toAffE);
@@ -63,7 +63,7 @@ exports.unsafeAffCall = function (toAffE) {
     };
 };
 
-exports.effProp = function (prop) {
+export function effProp (prop) {
     return function (object) {
         return function () {
             return object[prop];

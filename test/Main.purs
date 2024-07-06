@@ -9,16 +9,16 @@ import Effect.Class (liftEffect)
 import Effect.Console as Console
 import Effect.Ref as Ref
 import Foreign as Foreign
-import Node.Encoding as Encoding
 import Node.FS.Aff as FS
 import Node.Stream as Stream
-import Playwright
+import Node.EventEmitter (on_)
+import Playwright (Selector(..), URL(..), chromium, click, close, dblclick, evaluate, exposeBinding, isClosed, launch, mainFrame, name, screenshot, textContent, url, version, waitForFunction, waitForSelector, waitForTimeout)
 import Playwright.ConsoleMessage as ConsoleMessage
 import Playwright.Dialog as Dialog
 import Playwright.Download as Download
 import Playwright.Event (on)
 import Playwright.Event as Event
-import Prelude
+import Prelude (Unit, bind, discard, pure, void, (#), ($), (/=), (<$>), (<<<), (<>), (=<<), (==))
 import Test.Unit (suite, test)
 import Test.Unit.Assert as Assert
 import Test.Unit.Main (runTest)
@@ -151,10 +151,11 @@ main = runTest do
             case mbStream of
               Nothing -> Assert.assert "Unable to get stream" false
               Just stream -> do
-                liftEffect $ Stream.onDataString stream Encoding.UTF8 $ \string -> do
+                liftEffect $ stream # on_ Stream.dataHStr \string -> do
                   Ref.write (Just string) downloadRef
           void $ evaluate page
             """
+            {
             function download(filename, text) {
               var element = document.createElement('a');
               element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -164,6 +165,7 @@ main = runTest do
               document.body.removeChild(element);
             }
             download("hello.txt","hiiii");
+            }
             """
           waitForTimeout page 100
           downloadContent <- liftEffect $ Ref.read downloadRef

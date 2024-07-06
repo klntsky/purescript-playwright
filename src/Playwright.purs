@@ -56,7 +56,6 @@ import Playwright.Data
 import Playwright.Internal (effCall, effProp, affCall)
 import Playwright.Options
 import Prelude (Unit, ($))
-import Undefined (undefined)
 import Untagged.Castable (class Castable)
 import Untagged.Union (type (|+|), UndefinedOr)
 
@@ -320,7 +319,7 @@ waitForFunction
   -- ^ Function to be evaluated in browser context
   -> o
   -> Aff JSHandle
-waitForFunction x s o = waitForFunction' x s (unsafeToForeign undefined) o
+waitForFunction x s o = waitForFunction' x s 0 o -- replaced undefined with 0 here
   where
     waitForFunction' = affCall "waitForFunction" \_ -> waitForFunction'
 
