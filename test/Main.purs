@@ -12,6 +12,7 @@ import Foreign as Foreign
 import Node.FS.Aff as FS
 import Node.Stream as Stream
 import Node.EventEmitter (on_)
+import Node.Encoding (Encoding(..))
 import Playwright (Selector(..), URL(..), chromium, click, close, dblclick, evaluate, exposeBinding, isClosed, launch, mainFrame, name, screenshot, textContent, url, version, waitForFunction, waitForSelector, waitForTimeout)
 import Playwright.ConsoleMessage as ConsoleMessage
 import Playwright.Dialog as Dialog
@@ -151,6 +152,7 @@ main = runTest do
             case mbStream of
               Nothing -> Assert.assert "Unable to get stream" false
               Just stream -> do
+                liftEffect $ Stream.setEncoding stream UTF8
                 liftEffect $ stream # on_ Stream.dataHStr \string -> do
                   Ref.write (Just string) downloadRef
           void $ evaluate page
