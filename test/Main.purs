@@ -155,15 +155,17 @@ main = runTest do
                   Ref.write (Just string) downloadRef
           void $ evaluate page
             """
-            function download(filename, text) {
-              var element = document.createElement('a');
-              element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-              element.setAttribute('download', filename);
-              document.body.appendChild(element);
-              element.click();
-              document.body.removeChild(element);
+            {
+                function download(filename, text) {
+                  var element = document.createElement('a');
+                  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                  element.setAttribute('download', filename);
+                  document.body.appendChild(element);
+                  element.click();
+                  document.body.removeChild(element);
+                }
+                download("hello.txt","hiiii");
             }
-            download("hello.txt","hiiii");
             """
           waitForTimeout page 100
           downloadContent <- liftEffect $ Ref.read downloadRef

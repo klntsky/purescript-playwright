@@ -1,5 +1,7 @@
 module Playwright
     ( launch
+    , connect
+    , connectOverCDP
     , close
     , contexts
     , isConnected
@@ -45,6 +47,8 @@ module Playwright
     )
 where
 
+import Playwright.Options
+
 import Control.Promise (Promise, fromAff, toAffE)
 import Data.String.Regex (Regex)
 import Effect (Effect)
@@ -52,9 +56,8 @@ import Effect.Aff (Aff)
 import Foreign (Foreign, unsafeToForeign)
 import Literals.Null (Null)
 import Node.Buffer (Buffer)
-import Playwright.Data
+import Playwright.Data (Browser, BrowserContext, BrowserType, ConsoleMessage, Dialog, Download, ElementHandle, ElementState, FileChooser, Frame, JSHandle, Keyboard, Modifier, Mouse, MouseButton, Page, Raf, Request, Response, Route, ScreenshotType, Selector(..), Selectors, URL(..), WaitUntil, Worker, alt, attached, chromium, control, detached, domcontentloaded, firefox, hidden, jpg, left, load, meta, middle, networkidle, png, raf, right, shift, visible, webkit)
 import Playwright.Internal (effCall, effProp, affCall)
-import Playwright.Options
 import Prelude (Unit, ($))
 import Undefined (undefined)
 import Untagged.Castable (class Castable)
@@ -66,6 +69,30 @@ launch
   => BrowserType -> o -> Aff Browser
 launch =
   affCall "launch" \_ -> launch
+
+connect
+  :: forall o
+  .  Castable o ConnectOptions
+  => BrowserType -> o -> Aff Browser
+connect =
+  affCall "connect" \_ -> connect
+
+type ConnectOptions =
+  { wsEndpoint :: String
+  , timeout :: UndefinedOr Number
+  }
+
+connectOverCDP
+  :: forall o
+  .  Castable o ConnectOverCDPOptions
+  => BrowserType -> o -> Aff Browser
+connectOverCDP =
+  affCall "connectOverCDP" \_ -> connectOverCDP
+
+type ConnectOverCDPOptions =
+  { endpointURL :: String
+  , timeout :: UndefinedOr Number
+  }
 
 close
   :: forall x
