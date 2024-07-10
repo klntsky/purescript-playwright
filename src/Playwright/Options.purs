@@ -3,6 +3,7 @@ module Playwright.Options where
 import Playwright.Data
 
 import Data.String.Regex (Regex)
+import Data.Time.Duration (Milliseconds(..))
 import Foreign (Foreign)
 import Foreign.Object (Object)
 import Literals.Null (Null)
@@ -22,7 +23,7 @@ type LaunchOptions =
   , handleSIGINT      :: Opt Boolean
   , handleSIGTERM     :: Opt Boolean
   , handleSIGHUP      :: Opt Boolean
-  , timeout           :: Opt Number
+  , timeout           :: Opt Milliseconds
   , env               :: Opt (Object String)
   , devtools          :: Opt Boolean
   , slowMo            :: Opt Number
@@ -40,11 +41,11 @@ type ScreenshotOptions =
   , "type"         :: Opt ScreenshotType
   , quality        :: Opt Number
   , omitBackground :: Opt Boolean
-  , timeout        :: Opt Number
+  , timeout        :: Opt Milliseconds
   }
 
 type GotoOptions =
-  { timeout   :: Opt Int
+  { timeout   :: Opt Milliseconds
   , waitUntil :: Opt WaitUntil
   , referer   :: Opt String
   }
@@ -57,7 +58,7 @@ type NewpageOptions =
   }
 
 type GoOptions =
-  { timeout   :: Opt Int
+  { timeout   :: Opt Milliseconds
   , waitUntil :: Opt WaitUntil
   }
 
@@ -68,11 +69,11 @@ type HoverOptions =
   }
 
 type InnerHTMLOptions =
-  { timeout :: Opt Number
+  { timeout :: Opt Milliseconds
   }
 
 type InnerTextOptions =
-  { timeout :: Opt Number
+  { timeout :: Opt Milliseconds
   }
 
 type KeyboardPressOptions =
@@ -92,7 +93,7 @@ type ClickOptions =
   , modifiers   :: Opt (Array Modifier)
   , force       :: Opt Boolean
   , noWaitAfter :: Opt Boolean
-  , timeout     :: Opt Int
+  , timeout     :: Opt Milliseconds
   }
 
 type MouseClickOptions =
@@ -116,31 +117,31 @@ type MouseMoveOptions =
   }
 
 type WaitForNavigationOptions =
-  { timeout   :: Opt Int
+  { timeout   :: Opt Milliseconds
   , url       :: Opt (String |+| Regex |+| URL -> Boolean)
   , waitUntil :: Opt WaitUntil
   }
 
 type WaitForRequestOptions =
-  { timeout :: Opt Int
+  { timeout :: Opt Milliseconds
   }
 
 type WaitForResponseOptions =
-  { timeout :: Opt Int
+  { timeout :: Opt Milliseconds
   }
 
 type WaitForSelectorOptions =
   { state   :: Opt ElementState
-  , timeout :: Opt Int
+  , timeout :: Opt Milliseconds
   }
 
 type WaitForFunctionOptions =
   { polling :: Opt (Int |+| Raf)
-  , timeout :: Opt Int
+  , timeout :: Opt Milliseconds
   }
 
 type WaitForLoadStateOptions =
-  { timeout :: Opt Int
+  { timeout :: Opt Milliseconds
   }
 
 type Margin =
@@ -168,5 +169,5 @@ type PdfOptions =
 
 type SetFilesOptions =
   { noWaitAfter :: Opt Boolean
-  , timeout     :: Opt Int
+  , timeout     :: Opt Milliseconds
   }

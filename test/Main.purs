@@ -3,6 +3,7 @@ module Test.Main where
 import Control.Monad.Except (runExcept)
 import Data.Either (isLeft)
 import Data.Maybe (Maybe(..))
+import Data.Time.Duration (Milliseconds(..))
 import Effect (Effect)
 import Effect.Aff (launchAff_, try)
 import Effect.Class (liftEffect)
@@ -79,7 +80,7 @@ main = runTest do
       withBrowserPage hello
         \page -> do
           void $ waitForSelector page (Selector "body") {}
-          res <- try $ waitForSelector page (Selector "nonexistent") { timeout: 100 }
+          res <- try $ waitForSelector page (Selector "nonexistent") { timeout: Milliseconds 100.0 }
           Assert.assert "waitForSelector fails when no element" $
             isLeft res
     test "waitForFunction" do
@@ -90,7 +91,7 @@ main = runTest do
           void $ waitForFunction
             page
             "document.body.textContent.includes('uniqstring')"
-            { timeout: 5000, polling: 100 }
+            { timeout: Milliseconds 5000.0, polling: 100 }
   suite "FFI" do
     test "exposeBinding" do
       withBrowserPage hello \page -> do

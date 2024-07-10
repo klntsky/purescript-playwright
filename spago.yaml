@@ -4,6 +4,7 @@ package:
     - aff-promise
     - argonaut-core
     - console
+    - datetime
     - effect
     - either
     - exceptions
