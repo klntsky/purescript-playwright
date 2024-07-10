@@ -2,7 +2,7 @@
 
 /**
  * @param {string} property - method to call on object
- * @param {number} n - number of (curried) arguments
+ * @param {number} argsCount - number of (curried) arguments
  * @param {effectRunnerWrapper} effectRunnerWrapper - a function to overrride
  * effect runner with. `toAffE` for `Aff`, `identity` for `Effect`.
  *
@@ -18,31 +18,20 @@
  *
  * effectfulGetter('close', 0, identity);
  */
- function effectfulGetter (property, argsCount, effectRunnerWrapper) {
-  const args = [];
-  return object => {
-      function effectRunner () {
-          return object[property].apply(object, args);
-      }
+function effectfulGetter (property, argsCount, effectRunnerWrapper) {
+    function consume(arg, args, counter) {
+        const argsNew = [ ...args, arg ];
 
-      const affectRunner = effectRunnerWrapper(effectRunner);
+        if (counter === 0) {
+            const [ object, ...rest ] = argsNew;
 
-      function chooseNext () {
-          return argsCount > 0 ? argsConsumer : affectRunner;
-      }
+            return effectRunnerWrapper(() => object[property].apply(object, rest))
+        } else {
+            return (a) => consume(a, argsNew, counter - 1)
+        }
+    }
 
-      function argsConsumer (arg) {
-          if (argsCount == 0) {
-              return affectRunner;
-          } else {
-              args.push(arg);
-              argsCount--;
-              return chooseNext();
-          }
-      }
-
-      return chooseNext();
-  };
+    return (object) => consume(object, [], argsCount)
 }
 
 function identity (x) {

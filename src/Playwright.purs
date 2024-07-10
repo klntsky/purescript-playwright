@@ -51,6 +51,7 @@ import Playwright.Options
 
 import Control.Promise (Promise, fromAff, toAffE)
 import Data.String.Regex (Regex)
+import Data.Unit (unit)
 import Effect (Effect)
 import Effect.Aff (Aff)
 import Foreign (Foreign, unsafeToForeign)
@@ -59,7 +60,6 @@ import Node.Buffer (Buffer)
 import Playwright.Data (Browser, BrowserContext, BrowserType, ConsoleMessage, Dialog, Download, ElementHandle, ElementState, FileChooser, Frame, JSHandle, Keyboard, Modifier, Mouse, MouseButton, Page, Raf, Request, Response, Route, ScreenshotType, Selector(..), Selectors, URL(..), WaitUntil, Worker, alt, attached, chromium, control, detached, domcontentloaded, firefox, hidden, jpg, left, load, meta, middle, networkidle, png, raf, right, shift, visible, webkit)
 import Playwright.Internal (effCall, effProp, affCall)
 import Prelude (Unit, ($))
-import Undefined (undefined)
 import Untagged.Castable (class Castable)
 import Untagged.Union (type (|+|), UndefinedOr)
 
@@ -347,7 +347,7 @@ waitForFunction
   -- ^ Function to be evaluated in browser context
   -> o
   -> Aff JSHandle
-waitForFunction x s o = waitForFunction' x s (unsafeToForeign undefined) o
+waitForFunction x s o = waitForFunction' x s unit o
   where
     waitForFunction' = affCall "waitForFunction" \_ -> waitForFunction'
 

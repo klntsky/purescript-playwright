@@ -1,5 +1,5 @@
 /* global exports __dirname */
 
-exports.cwd = process.cwd();
+export const cwd = process.cwd();
 
-exports.isNull = function (sth) { return sth === null; };
+export const isNull = sth => sth === null;

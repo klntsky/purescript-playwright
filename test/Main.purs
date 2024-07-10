@@ -13,6 +13,7 @@ import Node.Encoding as Encoding
 import Node.FS.Aff as FS
 import Node.Stream as Stream
 import Playwright
+import Node.EventEmitter (on_)
 import Playwright.ConsoleMessage as ConsoleMessage
 import Playwright.Dialog as Dialog
 import Playwright.Download as Download
@@ -151,7 +152,8 @@ main = runTest do
             case mbStream of
               Nothing -> Assert.assert "Unable to get stream" false
               Just stream -> do
-                liftEffect $ Stream.onDataString stream Encoding.UTF8 $ \string -> do
+                liftEffect $ Stream.setEncoding stream Encoding.UTF8
+                liftEffect $ stream # on_ Stream.dataHStr \string -> do
                   Ref.write (Just string) downloadRef
           void $ evaluate page
             """
