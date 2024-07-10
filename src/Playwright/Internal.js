@@ -19,30 +19,19 @@
  * effectfulGetter('close', 0, identity);
  */
 function effectfulGetter (property, argsCount, effectRunnerWrapper) {
-    var args = [];
-    return function (object) {
-        function effectRunner () {
-            return object[property].apply(object, args);
+    function consume(arg, args, counter) {
+        const argsNew = [ ...args, arg ];
+
+        if (counter === 0) {
+            const [ object, ...rest ] = argsNew;
+
+            return effectRunnerWrapper(() => object[property].apply(object, rest))
+        } else {
+            return (a) => consume(a, argsNew, counter - 1)
         }
+    }
 
-        var affectRunner = effectRunnerWrapper(effectRunner);
-
-        function chooseNext () {
-            return argsCount > 0 ? argsConsumer : affectRunner;
-        }
-
-        function argsConsumer (arg) {
-            if (argsCount == 0) {
-                return affectRunner;
-            } else {
-                args.push(arg);
-                argsCount--;
-                return chooseNext();
-            }
-        }
-
-        return chooseNext();
-    };
+    return (object) => consume(object, [], argsCount)
 }
 
 function identity (x) {
