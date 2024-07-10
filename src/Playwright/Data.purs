@@ -65,5 +65,10 @@ foreign import detached :: ElementState
 foreign import visible :: ElementState
 foreign import hidden :: ElementState
 
+foreign import data SameSite :: Type
+foreign import strict :: SameSite
+foreign import lax :: SameSite
+foreign import none :: SameSite
+
 foreign import data Raf :: Type
 foreign import raf :: Raf

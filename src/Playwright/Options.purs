@@ -8,8 +8,21 @@ import Foreign (Foreign)
 import Foreign.Object (Object)
 import Literals.Null (Null)
 import Untagged.Union (UndefinedOr, type (|+|))
+import Playwright.Types (Cookie)
 
 type Opt a = UndefinedOr a
+
+type FocusOptions =
+  { strict :: Opt Boolean
+  , timeout :: Opt Number
+  }
+
+type FillOptions =
+  { force :: Opt Boolean
+  , noWaitAfter :: Opt Boolean
+  , strict :: Opt Boolean
+  , timeout :: Opt Number
+  }
 
 type LaunchOptions =
   { headless          :: Opt Boolean
@@ -27,6 +40,13 @@ type LaunchOptions =
   , env               :: Opt (Object String)
   , devtools          :: Opt Boolean
   , slowMo            :: Opt Number
+  , storageState      :: Opt { cookies :: Array Cookie }
+  }
+
+type ConnectOptions =
+  { headers :: Opt (Object String)
+  , slowMo :: Opt Number
+  , timeout :: Opt Number
   }
 
 type ProxyOptions =

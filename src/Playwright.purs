@@ -4,6 +4,7 @@ module Playwright
     , connectOverCDP
     , close
     , contexts
+    , context
     , isConnected
     , version
     , newPage
@@ -11,6 +12,7 @@ module Playwright
     , goBack
     , goto
     , addCookies
+    , cookies
     , hover
     , innerHTML
     , innerText
@@ -42,6 +44,10 @@ module Playwright
     , setViewportSize
     , title
     , exposeBinding
+    , fill
+    , focus
+    , onResponse
+    , connect
     , module Playwright.Data
     , module Playwright.Options
     )
@@ -62,6 +68,21 @@ import Playwright.Internal (effCall, effProp, affCall)
 import Prelude (Unit, ($))
 import Untagged.Castable (class Castable)
 import Untagged.Union (type (|+|), UndefinedOr)
+import Playwright.Types (Cookie)
+
+foreign import onResponse :: Page -> (Response -> Effect Unit) -> Effect Unit
+
+fill
+  :: forall o
+  . Castable o FillOptions
+  => Page -> Selector -> String -> o -> Aff Unit
+fill = affCall "fill" \_ -> fill
+
+focus
+  :: forall o
+  . Castable o FocusOptions
+  => Page -> Selector -> o -> Aff Unit
+focus = affCall "focus" \_ -> focus
 
 launch
   :: forall o
@@ -70,28 +91,33 @@ launch
 launch =
   affCall "launch" \_ -> launch
 
+type WebSocketEndpoint = String
+
 connect
   :: forall o
-  .  Castable o ConnectOptions
-  => BrowserType -> o -> Aff Browser
-connect =
-  affCall "connect" \_ -> connect
+   . Castable o ConnectOptions
+  => BrowserType
+  -> WebSocketEndpoint
+  -> o
+  -> Aff Browser
+connect = affCall "connect" \_ -> connect
 
 type ConnectOptions =
-  { wsEndpoint :: String
-  , timeout :: UndefinedOr Number
+  { timeout :: UndefinedOr Number
   }
 
 connectOverCDP
   :: forall o
-  .  Castable o ConnectOverCDPOptions
-  => BrowserType -> o -> Aff Browser
+   . Castable o ConnectOverCDPOptions
+  => BrowserType
+  -> String
+  -> o
+  -> Aff Browser
 connectOverCDP =
   affCall "connectOverCDP" \_ -> connectOverCDP
 
 type ConnectOverCDPOptions =
-  { endpointURL :: String
-  , timeout :: UndefinedOr Number
+  { timeout :: UndefinedOr Number
   }
 
 close
@@ -143,12 +169,14 @@ goto
 goto =
   affCall "goto" \_ -> goto
 
-type Cookie =
-  { name :: String
-  , value :: String
-  , url :: UndefinedOr String
-  }
+foreign import context :: Page -> BrowserContext 
 
+cookies
+  :: BrowserContext
+  -> Aff (Array Cookie)
+cookies =
+  affCall "cookies" \_ -> cookies
+  
 addCookies
   :: BrowserContext
   -> Array Cookie

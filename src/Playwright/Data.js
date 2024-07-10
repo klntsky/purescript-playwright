@@ -30,3 +30,7 @@ export const visible = "visible";
 export const hidden = "hidden";
 
 export const raf = "raf";
+
+export const strict = "Strict";
+export const lax = "Lax";
+export const none = "None";

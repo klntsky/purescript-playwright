@@ -9,3 +9,17 @@ export const exposeBinding_ = x => name => cb => opts => () => {
     opts
   )
 }
+
+export const onResponse = function (page) {
+    return function (cb) {
+        return function () {
+            page.on('response', function (response) {
+                cb(response)();
+            });
+        };
+    };
+};
+
+export const context = function (page) {
+    return page.context();
+};
