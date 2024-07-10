@@ -18,55 +18,45 @@
  *
  * effectfulGetter('close', 0, identity);
  */
-function effectfulGetter (property, argsCount, effectRunnerWrapper) {
-    var args = [];
-    return function (object) {
-        function effectRunner () {
-            return object[property].apply(object, args);
-        }
+ function effectfulGetter (property, argsCount, effectRunnerWrapper) {
+  const args = [];
+  return object => {
+      function effectRunner () {
+          return object[property].apply(object, args);
+      }
 
-        var affectRunner = effectRunnerWrapper(effectRunner);
+      const affectRunner = effectRunnerWrapper(effectRunner);
 
-        function chooseNext () {
-            return argsCount > 0 ? argsConsumer : affectRunner;
-        }
+      function chooseNext () {
+          return argsCount > 0 ? argsConsumer : affectRunner;
+      }
 
-        function argsConsumer (arg) {
-            if (argsCount == 0) {
-                return affectRunner;
-            } else {
-                args.push(arg);
-                argsCount--;
-                return chooseNext();
-            }
-        }
+      function argsConsumer (arg) {
+          if (argsCount == 0) {
+              return affectRunner;
+          } else {
+              args.push(arg);
+              argsCount--;
+              return chooseNext();
+          }
+      }
 
-        return chooseNext();
-    };
+      return chooseNext();
+  };
 }
 
 function identity (x) {
-    return x;
+  return x;
 }
 
-exports.unsafeEffCall = function (method) {
-    return function (argsCount) {
-        return effectfulGetter(method, argsCount, identity);
-    };
-};
+export function unsafeEffCall(method) {
+  return argsCount => effectfulGetter(method, argsCount, identity);
+}
 
-exports.unsafeAffCall = function (toAffE) {
-    return function (method) {
-        return function (argsCount) {
-            return effectfulGetter(method, argsCount, toAffE);
-        };
-    };
-};
+export function unsafeAffCall(toAffE) {
+  return method => argsCount => effectfulGetter(method, argsCount, toAffE);
+}
 
-exports.effProp = function (prop) {
-    return function (object) {
-        return function () {
-            return object[prop];
-        };
-    };
+export function effProp(prop) {
+  return object => () => object[prop];
 }
