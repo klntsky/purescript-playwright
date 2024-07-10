@@ -63,61 +63,57 @@ launch
   :: forall o
   .  Castable o LaunchOptions
   => BrowserType -> o -> Aff Browser
-launch x o =
-  toAffE $ launchImpl x o
-foreign import launchImpl :: forall x o. x -> o -> Effect (Promise Browser)
+launch =
+  affCall "launch" \_ -> launch
 
 close
   :: forall x
   .  Castable x (Browser |+| BrowserContext |+| Page)
   => x -> Aff Unit
-close x =
-  toAffE $ closeImpl x
-foreign import closeImpl :: forall x. x -> Effect (Promise Unit)
+close =
+  affCall "close" \_ -> close
 
 contexts :: Browser -> Effect (Array BrowserContext)
-contexts x = contextsImpl x
-foreign import contextsImpl :: Browser -> Effect (Array BrowserContext)
+contexts =
+  effCall "contexts" (\_ -> contexts)
 
 isConnected :: Browser -> Effect Boolean
-isConnected x = isConnectedImpl x
-foreign import isConnectedImpl :: Browser -> Effect Boolean
+isConnected =
+  effCall "isConnected" (\_ -> isConnected)
 
 version :: Browser -> Effect String
-version x = versionImpl x
-foreign import versionImpl :: Browser -> Effect String
+version =
+  effCall "version" (\_ -> version)
 
 newPage
   :: forall x o
   .  Castable x (Browser |+| BrowserContext)
   => Castable o NewpageOptions
   => x -> o -> Aff Page
-newPage x o =
-  toAffE $ newPageImpl x o
-foreign import newPageImpl :: forall a b. a -> b -> Effect (Promise (Page))
+newPage =
+  affCall "newPage" \_ -> newPage
 
 goForward
   :: forall o
   .  Castable o GoOptions
   => Page -> o -> Aff (Null |+| Response)
-goForward p o = toAffE $ goForwardImpl p o
-foreign import goForwardImpl :: forall a. Page -> a -> Effect (Promise (Null |+| Response))
+goForward =
+  affCall "goForward" \_ -> goForward
 
 goBack
   :: forall o
   .  Castable o GoOptions
   => Page -> o -> Aff (Null |+| Response)
-goBack p o = toAffE $ goBackImpl p o
-foreign import goBackImpl :: forall a. Page -> a -> Effect (Promise (Null |+| Response))
+goBack  =
+  affCall "goBack" \_ -> goBack
 
 goto
   :: forall x o
   .  Castable x (Page |+| Frame)
   => Castable o GotoOptions
   => x -> URL -> o -> Aff (Null |+| Response)
-goto x u o =
-  toAffE $ gotoImpl x u o
-foreign import gotoImpl :: forall a b. a -> URL -> b -> Effect (Promise (Null |+| Response))
+goto =
+  affCall "goto" \_ -> goto
 
 type Cookie =
   { name :: String
@@ -129,27 +125,24 @@ addCookies
   :: BrowserContext
   -> Array Cookie
   -> Aff Unit
-addCookies b cs =
-  toAffE $ addCookiesImpl b cs
-foreign import addCookiesImpl :: BrowserContext -> Array Cookie -> Effect (Promise Unit)
+addCookies =
+  affCall "addCookies" \_ -> addCookies
 
 hover
   :: forall x o
   .  Castable x (Page |+| Frame |+| ElementHandle)
   => Castable o HoverOptions
   => x -> o -> Aff Unit
-hover x o =
-  toAffE $ hoverImpl x o
-foreign import hoverImpl :: forall a b. a -> b -> Effect (Promise Unit)
+hover =
+  affCall "hover" \_ -> hover
 
 innerHTML
   :: forall x o
   .  Castable x (Page |+| Frame)
   => Castable o InnerHTMLOptions
   => x -> Selector -> o -> Aff String
-innerHTML x s o =
-  toAffE $ innerHTMLImpl x s o
-foreign import innerHTMLImpl :: forall a b. a -> Selector -> b -> Effect (Promise String)
+innerHTML =
+  affCall "innerHTML" \_ -> innerHTML
 
 innerText
   :: forall x o
@@ -159,64 +152,59 @@ innerText
   -> Selector
   -> o
   -> Aff String
-innerText x s o =
-  toAffE $ innerTextImpl x s o
-foreign import innerTextImpl :: forall a b. a -> Selector -> b -> Effect (Promise String)
+innerText  =
+  affCall "innerText" \_ -> innerText
 
 isClosed :: Page -> Effect Boolean
-isClosed x = isClosedImpl x
-foreign import isClosedImpl :: Page -> Effect Boolean
+isClosed = effCall "isClosed" \_ -> isClosed
 
 keyboard :: Page -> Effect Keyboard
-keyboard x = keyboardImpl x
-foreign import keyboardImpl :: Page -> Effect Keyboard
+keyboard = effProp "keyboard"
 
 mainFrame :: Page -> Effect Frame
-mainFrame x = mainFrameImpl x
-foreign import mainFrameImpl :: Page -> Effect Frame
+mainFrame = effCall "mainFrame" \_ -> mainFrame
 
 name :: Frame -> Effect String
-name x = nameImpl x
-foreign import nameImpl :: Frame -> Effect String
+name = effCall "name" \_ -> name
 
 -- | `sth.$(selector)`
 query
   :: forall x
   .  Castable x (ElementHandle |+| Page |+| Frame)
   => x -> Selector -> Aff (Null |+| ElementHandle)
-query x s = toAffE $ queryImpl x s
-foreign import queryImpl :: forall a. a -> Selector -> Effect (Promise (Null |+| ElementHandle))
+query =
+  affCall "$" \_ -> query
 
 -- | `sth.$$(selector)`
 queryMany
   :: forall x
   .  Castable x (ElementHandle |+| Page |+| Frame)
   => x -> Selector -> Aff (Array ElementHandle)
-queryMany x s = toAffE $ queryManyImpl x s
-foreign import queryManyImpl :: forall a. a -> Selector -> Effect (Promise (Array ElementHandle))
+queryMany =
+  affCall "$$" \_ -> queryMany
 
 screenshot
   :: forall x o
   .  Castable x (ElementHandle |+| Page)
   => Castable o ScreenshotOptions
   => x -> o -> Aff Buffer
-screenshot x o = toAffE $ screenshotImpl x o
-foreign import screenshotImpl :: forall a b. a -> b -> Effect (Promise Buffer)
+screenshot =
+  affCall "screenshot" \_ -> screenshot
 
 textContent
   :: forall x
   .  Castable x (Page |+| Frame |+| ElementHandle)
   => x -> Selector -> Aff (Null |+| String)
-textContent x s = toAffE $ textContentImpl x s
-foreign import textContentImpl :: forall a. a -> Selector -> Effect (Promise (Null |+| String))
+textContent =
+  affCall "textContent" \_ -> textContent
 
 url
   :: forall x
   .  Castable x (Page |+| Frame |+| Download |+| Request |+| Response |+| Worker)
   => x
   -> Effect URL
-url x = urlImpl x
-foreign import urlImpl :: forall a. a -> Effect URL
+url =
+  effCall "url" \_ -> url
 
 addInitScript
   :: forall x o
@@ -225,12 +213,12 @@ addInitScript
   => x
   -> o
   -> Aff Unit
-addInitScript x o = toAffE $ addInitScriptImpl x o
-foreign import addInitScriptImpl :: forall a b. a -> b -> Effect (Promise Unit)
+addInitScript =
+  affCall "addInitScript" \_ -> addInitScript
 
 clearCookies :: BrowserContext -> Aff Unit
-clearCookies b = toAffE $ clearCookiesImpl b
-foreign import clearCookiesImpl :: BrowserContext -> Effect (Promise Unit)
+clearCookies =
+  affCall "clearCookies" \_ -> clearCookies
 
 click
   :: forall x o
@@ -240,16 +228,16 @@ click
   -> Selector
   -> o
   -> Aff Unit
-click x s o = toAffE $ clickImpl x s o
-foreign import clickImpl :: forall a b. a -> Selector -> b -> Effect (Promise Unit)
+click =
+  affCall "click" \_ -> click
 
 content
   :: forall x
   . Castable x (Page |+| Frame)
   => x
   -> Aff String
-content x = toAffE $ contentImpl x
-foreign import contentImpl :: forall a. a -> Effect (Promise String)
+content =
+  affCall "content" \_ -> content
 
 dblclick
   :: forall x o
@@ -259,8 +247,8 @@ dblclick
   -> Selector
   -> o
   -> Aff Unit
-dblclick x s o = toAffE $ dblclickImpl x s o
-foreign import dblclickImpl :: forall a b. a -> Selector -> b -> Effect (Promise Unit)
+dblclick =
+  affCall "dblclick" \_ -> dblclick
 
 evaluate
   :: forall x
@@ -269,9 +257,8 @@ evaluate
   -> String
   -- ^ Function to be evaluated in browser context
   -> Aff Foreign
-evaluate x s =
-  toAffE $ evaluateImpl x s
-foreign import evaluateImpl :: forall a. a -> String -> Effect (Promise Foreign)
+evaluate =
+  affCall "evaluate" \_ -> evaluate
 
 evaluateHandle
   :: forall x
@@ -280,9 +267,8 @@ evaluateHandle
   -> String
   -- ^ Function to be evaluated in browser context
   -> Aff JSHandle
-evaluateHandle x s =
-  toAffE $ evaluateHandleImpl x s
-foreign import evaluateHandleImpl :: forall a. a -> String -> Effect (Promise JSHandle)
+evaluateHandle =
+  affCall "evaluateHandle" \_ -> evaluateHandle
 
 waitForNavigation
   :: forall x o
@@ -291,9 +277,8 @@ waitForNavigation
   => x
   -> o
   -> Aff (Null |+| Response)
-waitForNavigation x o =
-  toAffE $ waitForNavigationImpl x o
-foreign import waitForNavigationImpl :: forall a b. a -> b -> Effect (Promise (Null |+| Response))
+waitForNavigation =
+  affCall "waitForNavigation" \_ -> waitForNavigation
 
 waitForRequest
   :: forall url o
@@ -303,9 +288,7 @@ waitForRequest
   -> url
   -> o
   -> Aff Request
-waitForRequest p u o =
-  toAffE $ waitForRequestImpl p u o
-foreign import waitForRequestImpl :: forall a b. Page -> a -> b -> Effect (Promise Request)
+waitForRequest = affCall "waitForRequest" \_ -> waitForRequest
 
 waitForResponse
   :: forall url o
@@ -315,9 +298,7 @@ waitForResponse
   -> url
   -> o
   -> Aff Response
-waitForResponse p u o =
-  toAffE $ waitForResponseImpl p u o
-foreign import waitForResponseImpl :: forall a b. Page -> a -> b -> Effect (Promise Response)
+waitForResponse = affCall "waitForResponse" \_ -> waitForResponse
 
 waitForSelector
   :: forall x o
@@ -327,9 +308,7 @@ waitForSelector
   -> Selector
   -> o
   -> Aff (Null |+| ElementHandle)
-waitForSelector x s o =
-  toAffE $ waitForSelectorImpl x s o
-foreign import waitForSelectorImpl :: forall a b. a -> Selector -> b -> Effect (Promise (Null |+| ElementHandle))
+waitForSelector = affCall "waitForSelector" \_ -> waitForSelector
 
 waitForFunction
   :: forall x o
@@ -340,8 +319,9 @@ waitForFunction
   -- ^ Function to be evaluated in browser context
   -> o
   -> Aff JSHandle
-waitForFunction x s o = toAffE $ waitForFunctionImpl x s o
-foreign import waitForFunctionImpl :: forall a b. a -> String -> b -> Effect (Promise JSHandle)
+waitForFunction x s o = waitForFunction' x s 0 o -- replaced undefined with 0 here
+  where
+    waitForFunction' = affCall "waitForFunction" \_ -> waitForFunction'
 
 waitForLoadState
   :: forall x o
@@ -351,8 +331,7 @@ waitForLoadState
   -> WaitUntil
   -> o
   -> Aff Unit
-waitForLoadState x w o = toAffE $ waitForLoadStateImpl x w o
-foreign import waitForLoadStateImpl :: forall a b. a -> WaitUntil -> b -> Effect (Promise Unit)
+waitForLoadState = affCall "waitForLoadState" \_ -> waitForLoadState
 
 waitForTimeout
   :: forall x
@@ -360,8 +339,7 @@ waitForTimeout
   => x
   -> Int
   -> Aff Unit
-waitForTimeout x t = toAffE $ waitForTimeoutImpl x t
-foreign import waitForTimeoutImpl :: forall a. a -> Int -> Effect (Promise Unit)
+waitForTimeout = affCall "waitForTimeout" \_ -> waitForTimeout
 
 pdf
   :: forall o
@@ -369,8 +347,7 @@ pdf
   => Page
   -> o
   -> Aff Buffer
-pdf p o = toAffE $ pdfImpl p o
-foreign import pdfImpl :: forall a. Page -> a -> Effect (Promise Buffer)
+pdf = affCall "pdf" \_ -> pdf
 
 setInputFiles
   :: forall x o f
@@ -393,8 +370,7 @@ setInputFiles
   -> f
   -> o
   -> Aff Unit
-setInputFiles x s f o = toAffE $ setInputFilesImpl x s f o
-foreign import setInputFilesImpl :: forall a b c. a -> Selector -> b -> c -> Effect (Promise Unit)
+setInputFiles = affCall "setInputFiles" \_ -> setInputFiles
 
 setViewportSize
   :: Page
@@ -402,16 +378,14 @@ setViewportSize
      , height :: Number
      }
   ->  Aff Unit
-setViewportSize p o = toAffE $ setViewportSizeImpl p o
-foreign import setViewportSizeImpl :: Page -> { width  :: Number, height :: Number } -> Effect (Promise Unit)
+setViewportSize = affCall "setViewportSize" \_ -> setViewportSize
 
 title
   :: forall x
   .  Castable x (Page |+| Frame)
   => x
   -> Aff String
-title x = toAffE $ titleImpl x
-foreign import titleImpl :: forall a. a -> Effect (Promise String)
+title = affCall "title" \_ -> title
 
 exposeBinding
   :: forall x b
