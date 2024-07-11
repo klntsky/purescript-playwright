@@ -1,7 +1,10 @@
 module Playwright
     ( launch
+    , connect
+    , connectOverCDP
     , close
     , contexts
+    , context
     , isConnected
     , version
     , newPage
@@ -9,6 +12,7 @@ module Playwright
     , goBack
     , goto
     , addCookies
+    , cookies
     , hover
     , innerHTML
     , innerText
@@ -40,25 +44,45 @@ module Playwright
     , setViewportSize
     , title
     , exposeBinding
+    , fill
+    , focus
+    , onResponse
+    , connect
     , module Playwright.Data
     , module Playwright.Options
     )
 where
 
+import Playwright.Options
+
 import Control.Promise (Promise, fromAff, toAffE)
 import Data.String.Regex (Regex)
+import Data.Unit (unit)
 import Effect (Effect)
 import Effect.Aff (Aff)
 import Foreign (Foreign, unsafeToForeign)
 import Literals.Null (Null)
 import Node.Buffer (Buffer)
-import Playwright.Data
+import Playwright.Data (Browser, BrowserContext, BrowserType, ConsoleMessage, Dialog, Download, ElementHandle, ElementState, FileChooser, Frame, JSHandle, Keyboard, Modifier, Mouse, MouseButton, Page, Raf, Request, Response, Route, ScreenshotType, Selector(..), Selectors, URL(..), WaitUntil, Worker, alt, attached, chromium, control, detached, domcontentloaded, firefox, hidden, jpg, left, load, meta, middle, networkidle, png, raf, right, shift, visible, webkit)
 import Playwright.Internal (effCall, effProp, affCall)
-import Playwright.Options
 import Prelude (Unit, ($))
-import Undefined (undefined)
 import Untagged.Castable (class Castable)
 import Untagged.Union (type (|+|), UndefinedOr)
+import Playwright.Types (Cookie)
+
+foreign import onResponse :: Page -> (Response -> Effect Unit) -> Effect Unit
+
+fill
+  :: forall o
+  . Castable o FillOptions
+  => Page -> Selector -> String -> o -> Aff Unit
+fill = affCall "fill" \_ -> fill
+
+focus
+  :: forall o
+  . Castable o FocusOptions
+  => Page -> Selector -> o -> Aff Unit
+focus = affCall "focus" \_ -> focus
 
 launch
   :: forall o
@@ -66,6 +90,35 @@ launch
   => BrowserType -> o -> Aff Browser
 launch =
   affCall "launch" \_ -> launch
+
+type WebSocketEndpoint = String
+
+connect
+  :: forall o
+   . Castable o ConnectOptions
+  => BrowserType
+  -> WebSocketEndpoint
+  -> o
+  -> Aff Browser
+connect = affCall "connect" \_ -> connect
+
+type ConnectOptions =
+  { timeout :: UndefinedOr Number
+  }
+
+connectOverCDP
+  :: forall o
+   . Castable o ConnectOverCDPOptions
+  => BrowserType
+  -> String
+  -> o
+  -> Aff Browser
+connectOverCDP =
+  affCall "connectOverCDP" \_ -> connectOverCDP
+
+type ConnectOverCDPOptions =
+  { timeout :: UndefinedOr Number
+  }
 
 close
   :: forall x
@@ -116,12 +169,15 @@ goto
 goto =
   affCall "goto" \_ -> goto
 
-type Cookie =
-  { name :: String
-  , value :: String
-  , url :: UndefinedOr String
-  }
+context :: Page -> BrowserContext
+context = affCall "context" \_ -> context
 
+cookies
+  :: BrowserContext
+  -> Aff (Array Cookie)
+cookies =
+  affCall "cookies" \_ -> cookies
+  
 addCookies
   :: BrowserContext
   -> Array Cookie
@@ -320,7 +376,7 @@ waitForFunction
   -- ^ Function to be evaluated in browser context
   -> o
   -> Aff JSHandle
-waitForFunction x s o = waitForFunction' x s (unsafeToForeign undefined) o
+waitForFunction x s o = waitForFunction' x s unit o
   where
     waitForFunction' = affCall "waitForFunction" \_ -> waitForFunction'
 

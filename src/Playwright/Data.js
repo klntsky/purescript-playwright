@@ -1,31 +1,36 @@
 /* global require exports */
-var P = require('playwright');
+import { chromium as pwChromium, firefox as pwFirefox, webkit as pwWebkit } from 'playwright';
 
-exports.png = "png";
-exports.jpg = "jpg";
+export const png = "png";
+export const jpg = "jpg";
 
-exports.chromium = P.chromium;
-exports.firefox = P.firefox;
-exports.webkit = P.webkit;
+export const chromium = pwChromium;
+export const firefox = pwFirefox;
+export const webkit = pwWebkit;
 
-exports.domcontentloaded = "domcontentloaded";
-exports.load = "load";
-exports.networkidle = "networkidle";
+export const domcontentloaded = "domcontentloaded";
+export const load = "load";
+export const networkidle = "networkidle";
 
-exports.alt = "Alt";
-exports.control = "Control";
-exports.meta = "Meta";
-exports.shift = "Shift";
+export const alt = "Alt";
+export const control = "Control";
+export const meta = "Meta";
+export const shift = "Shift";
 
-exports.null = null;
+const _null = null;
+export { _null as null };
 
-exports.left = "left";
-exports.right = "right";
-exports.middle = "middle";
+export const left = "left";
+export const right = "right";
+export const middle = "middle";
 
-exports.attached = "attached";
-exports.detached = "detached";
-exports.visible = "visible";
-exports.hidden = "hidden";
+export const attached = "attached";
+export const detached = "detached";
+export const visible = "visible";
+export const hidden = "hidden";
 
-exports.raf = "raf";
+export const raf = "raf";
+
+export const strict = "Strict";
+export const lax = "Lax";
+export const none = "None";

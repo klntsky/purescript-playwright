@@ -3,6 +3,7 @@ module Test.Main where
 import Control.Monad.Except (runExcept)
 import Data.Either (isLeft)
 import Data.Maybe (Maybe(..))
+import Data.Time.Duration (Milliseconds(..))
 import Effect (Effect)
 import Effect.Aff (launchAff_, try)
 import Effect.Class (liftEffect)
@@ -13,6 +14,7 @@ import Node.Encoding as Encoding
 import Node.FS.Aff as FS
 import Node.Stream as Stream
 import Playwright
+import Node.EventEmitter (on_)
 import Playwright.ConsoleMessage as ConsoleMessage
 import Playwright.Dialog as Dialog
 import Playwright.Download as Download
@@ -78,7 +80,7 @@ main = runTest do
       withBrowserPage hello
         \page -> do
           void $ waitForSelector page (Selector "body") {}
-          res <- try $ waitForSelector page (Selector "nonexistent") { timeout: 100 }
+          res <- try $ waitForSelector page (Selector "nonexistent") { timeout: Milliseconds 100.0 }
           Assert.assert "waitForSelector fails when no element" $
             isLeft res
     test "waitForFunction" do
@@ -89,7 +91,7 @@ main = runTest do
           void $ waitForFunction
             page
             "document.body.textContent.includes('uniqstring')"
-            { timeout: 5000, polling: 100 }
+            { timeout: Milliseconds 5000.0, polling: 100 }
   suite "FFI" do
     test "exposeBinding" do
       withBrowserPage hello \page -> do
@@ -151,19 +153,22 @@ main = runTest do
             case mbStream of
               Nothing -> Assert.assert "Unable to get stream" false
               Just stream -> do
-                liftEffect $ Stream.onDataString stream Encoding.UTF8 $ \string -> do
+                liftEffect $ Stream.setEncoding stream Encoding.UTF8
+                liftEffect $ stream # on_ Stream.dataHStr \string -> do
                   Ref.write (Just string) downloadRef
           void $ evaluate page
             """
-            function download(filename, text) {
-              var element = document.createElement('a');
-              element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-              element.setAttribute('download', filename);
-              document.body.appendChild(element);
-              element.click();
-              document.body.removeChild(element);
+            {
+                function download(filename, text) {
+                  var element = document.createElement('a');
+                  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                  element.setAttribute('download', filename);
+                  document.body.appendChild(element);
+                  element.click();
+                  document.body.removeChild(element);
+                }
+                download("hello.txt","hiiii");
             }
-            download("hello.txt","hiiii");
             """
           waitForTimeout page 100
           downloadContent <- liftEffect $ Ref.read downloadRef

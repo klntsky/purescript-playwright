@@ -1,0 +1,30 @@
+package:
+  dependencies:
+    - aff
+    - aff-promise
+    - argonaut-core
+    - console
+    - datetime
+    - effect
+    - either
+    - exceptions
+    - foreign
+    - foreign-object
+    - literals
+    - maybe
+    - node-buffer
+    - node-fs
+    - node-streams
+    - ordered-collections
+    - prelude
+    - psci-support
+    - refs
+    - strings
+    - test-unit
+    - transformers
+    - untagged-union
+    - literals
+  name: playwright
+workspace:
+  packageSet:
+    registry: 53.2.0

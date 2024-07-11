@@ -16,5 +16,6 @@ jobs:
         run: |
           PATH="$PATH:./node_modules/.bin/"
           npm install
-          npm install spago purescript
+          npm install spago@next purescript
+          npx playwright install --with-deps chromium
           spago test
