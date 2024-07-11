@@ -11,12 +11,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          ref: ${{ github.head_ref }}
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
+          node-version: 18
       - run: npm install
       - run: npm install purescript
       - run: npx playwright install --with-deps chromium
@@ -25,15 +23,12 @@ jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          ref: ${{ github.head_ref }}
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
+          node-version: 18
       - run: npm run format
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Apply formatting changes
-          branch: ${{ github.head_ref }}
