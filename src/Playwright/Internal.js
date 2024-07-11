@@ -18,34 +18,34 @@
  *
  * effectfulGetter('close', 0, identity);
  */
-function effectfulGetter (property, argsCount, effectRunnerWrapper) {
-    function consume(arg, args, counter) {
-        const argsNew = [ ...args, arg ];
+function effectfulGetter(property, argsCount, effectRunnerWrapper) {
+  function consume(arg, args, counter) {
+    const argsNew = [...args, arg];
 
-        if (counter === 0) {
-            const [ object, ...rest ] = argsNew;
+    if (counter === 0) {
+      const [object, ...rest] = argsNew;
 
-            return effectRunnerWrapper(() => object[property].apply(object, rest))
-        } else {
-            return (a) => consume(a, argsNew, counter - 1)
-        }
+      return effectRunnerWrapper(() => object[property].apply(object, rest));
+    } else {
+      return (a) => consume(a, argsNew, counter - 1);
     }
+  }
 
-    return (object) => consume(object, [], argsCount)
+  return (object) => consume(object, [], argsCount);
 }
 
-function identity (x) {
+function identity(x) {
   return x;
 }
 
 export function unsafeEffCall(method) {
-  return argsCount => effectfulGetter(method, argsCount, identity);
+  return (argsCount) => effectfulGetter(method, argsCount, identity);
 }
 
 export function unsafeAffCall(toAffE) {
-  return method => argsCount => effectfulGetter(method, argsCount, toAffE);
+  return (method) => (argsCount) => effectfulGetter(method, argsCount, toAffE);
 }
 
 export function effProp(prop) {
-  return object => () => object[prop];
+  return (object) => () => object[prop];
 }

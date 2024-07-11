@@ -1,18 +1,18 @@
 module Playwright.Internal
-       ( class NumberOfArgs
-       , numberOfArgs
-       , effCall
-       , effProp
-       , affCall
-       )
- where
+  ( class NumberOfArgs
+  , numberOfArgs
+  , effCall
+  , effProp
+  , affCall
+  ) where
 
-import Type.Proxy
-import Prelude
-import Effect
-import Effect.Aff
-import Control.Promise
+import Type.Proxy (Proxy(..))
+import Prelude ((+), (-))
+import Effect (Effect)
+import Effect.Aff (Aff)
+import Control.Promise (Promise, toAffE)
 
+class NumberOfArgs :: forall k. k -> Constraint
 class NumberOfArgs x where
   numberOfArgs :: Proxy x -> Int
 
@@ -25,18 +25,18 @@ else instance numberOfArgsFunction0 :: NumberOfArgs a where
 countArgs :: forall a. NumberOfArgs a => (forall x. x -> a) -> Int
 countArgs f = numberOfArgs (proxyOf f) - 2
   where
-    proxyOf :: forall a. a -> Proxy a
-    proxyOf _ = Proxy :: Proxy a
+  proxyOf :: forall b. b -> Proxy b
+  proxyOf _ = Proxy :: Proxy b
 
 foreign import unsafeEffCall
   :: forall r
-  .  String
+   . String
   -> Int
   -> r
 
 foreign import unsafeAffCall
   :: forall r
-  .  (forall a. Effect (Promise a) -> Aff a)
+   . (forall a. Effect (Promise a) -> Aff a)
   -> String
   -> Int
   -> r

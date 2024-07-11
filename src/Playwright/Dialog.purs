@@ -23,10 +23,10 @@ data DialogType = Alert | Beforeunload | Confirm | Prompt
 type' :: Dialog -> Effect DialogType
 type' = map convert <<< type''
   where
-    type'' = effCall "type" \_ -> type''
-    convert = case _ of
-      "alert" -> Alert
-      "beforeunload" -> Beforeunload
-      "confirm" -> Confirm
-      "prompt" -> Prompt
-      _ -> Alert -- impossible
+  type'' = effCall "type" \_ -> type''
+  convert = case _ of
+    "alert" -> Alert
+    "beforeunload" -> Beforeunload
+    "confirm" -> Confirm
+    "prompt" -> Prompt
+    _ -> Alert -- impossible

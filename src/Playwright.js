@@ -1,21 +1,21 @@
 /* global exports */
 
-export const exposeBinding_ = x => name => cb => opts => () => {
+export const exposeBinding_ = (x) => (name) => (cb) => (opts) => () => {
   return x.exposeBinding(
     name,
     function (info, arg) {
-      return cb(info)(arg)()
+      return cb(info)(arg)();
     },
-    opts
-  )
-}
+    opts,
+  );
+};
 
 export const onResponse = function (page) {
-    return function (cb) {
-        return function () {
-            page.on('response', function (response) {
-                cb(response)();
-            });
-        };
+  return function (cb) {
+    return function () {
+      page.on("response", function (response) {
+        cb(response)();
+      });
     };
+  };
 };

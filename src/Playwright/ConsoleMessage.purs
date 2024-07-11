@@ -15,9 +15,24 @@ type ConsoleMessageLocation =
   }
 
 data ConsoleMessageType
-  = Log | Debug | Info | Error | Warning | Dir | Dirxml | Table | Trace | Clear
-  | StartGroup | StartGroupCollapsed | EndGroup | Assert | Profile | ProfileEnd
-  | Count | TimeEnd
+  = Log
+  | Debug
+  | Info
+  | Error
+  | Warning
+  | Dir
+  | Dirxml
+  | Table
+  | Trace
+  | Clear
+  | StartGroup
+  | StartGroupCollapsed
+  | EndGroup
+  | Assert
+  | Profile
+  | ProfileEnd
+  | Count
+  | TimeEnd
 
 derive instance genericConsoleMessageType :: Generic ConsoleMessageType _
 derive instance eqConsoleMessageType :: Eq ConsoleMessageType
@@ -37,25 +52,25 @@ text = effCall "text" \_ -> text
 type' :: ConsoleMessage -> Effect ConsoleMessageType
 type' = map convert <<< type''
   where
-    type'' :: ConsoleMessage -> Effect String
-    type'' = effCall "type" \_ -> type''
-    convert = case _ of
-      "log" ->  Log
-      "debug" ->  Debug
-      "info" ->  Info
-      "error" ->  Error
-      "warning" ->  Warning
-      "dir" ->  Dir
-      "dirxml" ->  Dirxml
-      "table" ->  Table
-      "trace" ->  Trace
-      "clear" ->  Clear
-      "startGroup" ->  StartGroup
-      "startGroupCollapsed" ->  StartGroupCollapsed
-      "endGroup" ->  EndGroup
-      "assert" ->  Assert
-      "profile" ->  Profile
-      "profileEnd" ->  ProfileEnd
-      "count" ->  Count
-      "timeEnd" ->  TimeEnd
-      _ -> Log -- impossible
+  type'' :: ConsoleMessage -> Effect String
+  type'' = effCall "type" \_ -> type''
+  convert = case _ of
+    "log" -> Log
+    "debug" -> Debug
+    "info" -> Info
+    "error" -> Error
+    "warning" -> Warning
+    "dir" -> Dir
+    "dirxml" -> Dirxml
+    "table" -> Table
+    "trace" -> Trace
+    "clear" -> Clear
+    "startGroup" -> StartGroup
+    "startGroupCollapsed" -> StartGroupCollapsed
+    "endGroup" -> EndGroup
+    "assert" -> Assert
+    "profile" -> Profile
+    "profileEnd" -> ProfileEnd
+    "count" -> Count
+    "timeEnd" -> TimeEnd
+    _ -> Log -- impossible

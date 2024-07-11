@@ -1,17 +1,16 @@
 module Playwright.Response
-       ( body
-       , finished
-       , frame
-       , headers
-       , json
-       , ok
-       , request
-       , status
-       , statusText
-       , text
-       , url
-       )
-where
+  ( body
+  , finished
+  , frame
+  , headers
+  , json
+  , ok
+  , request
+  , status
+  , statusText
+  , text
+  , url
+  ) where
 
 import Control.Promise (Promise, toAffE)
 import Data.Argonaut.Core (Json)
