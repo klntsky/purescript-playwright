@@ -169,7 +169,8 @@ goto
 goto =
   affCall "goto" \_ -> goto
 
-foreign import context :: Page -> BrowserContext 
+context :: Page -> BrowserContext
+context = affCall "context" \_ -> context
 
 cookies
   :: BrowserContext

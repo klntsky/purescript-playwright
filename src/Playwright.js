@@ -19,7 +19,3 @@ export const onResponse = function (page) {
         };
     };
 };
-
-export const context = function (page) {
-    return page.context();
-};
