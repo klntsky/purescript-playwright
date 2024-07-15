@@ -27,8 +27,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm run format
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: Apply formatting changes
+      - run: npm run check
