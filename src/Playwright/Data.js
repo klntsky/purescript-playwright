@@ -1,5 +1,9 @@
 /* global require exports */
-import { chromium as pwChromium, firefox as pwFirefox, webkit as pwWebkit } from 'playwright';
+import {
+  chromium as pwChromium,
+  firefox as pwFirefox,
+  webkit as pwWebkit,
+} from "playwright";
 
 export const png = "png";
 export const jpg = "jpg";

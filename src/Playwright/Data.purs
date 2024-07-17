@@ -1,8 +1,6 @@
 module Playwright.Data where
 
 import Prelude
-import Untagged.TypeCheck (class HasRuntimeType)
-import Foreign (Foreign)
 
 foreign import data BrowserType :: Type
 foreign import data Browser :: Type
@@ -29,11 +27,13 @@ foreign import png :: ScreenshotType
 foreign import jpg :: ScreenshotType
 
 newtype Selector = Selector String
+
 derive newtype instance eqSelector :: Eq Selector
 derive newtype instance showSelector :: Show Selector
 derive newtype instance ordSelector :: Ord Selector
 
 newtype URL = URL String
+
 derive newtype instance eqURL :: Eq URL
 derive newtype instance showURL :: Show URL
 derive newtype instance ordURL :: Ord URL

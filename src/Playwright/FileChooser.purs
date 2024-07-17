@@ -21,19 +21,21 @@ page = effCall "page" \_ -> page
 
 setFiles
   :: forall o f
-  .  Castable o SetFilesOptions
+   . Castable o SetFilesOptions
   => Castable f
-     ( String
-   |+| Array String
-   |+| { name :: String
-       , mimeType :: String
-       , buffer :: Buffer
-       }
-   |+| Array { name :: String
+       ( String
+           |+| Array String
+           |+|
+             { name :: String
              , mimeType :: String
              , buffer :: Buffer
              }
-     )
+           |+| Array
+             { name :: String
+             , mimeType :: String
+             , buffer :: Buffer
+             }
+       )
   => FileChooser
   -> f
   -> o

@@ -10,7 +10,9 @@
     "playwright": "^1.45.1"
   },
   "scripts": {
-    "test": "pulp test"
+    "test": "npx spago@next test",
+    "format": "npx prettier --write src/**/*.js test/**/*.js; npx purs-tidy format-in-place src/**/*.purs test/**/*.purs",
+    "check": "npx prettier --check src/**/*.js test/**/*.js; npx purs-tidy check src/**/*.purs test/**/*.purs"
   },
   "repository": {
     "type": "git",

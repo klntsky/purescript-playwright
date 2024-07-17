@@ -1,12 +1,11 @@
 module TestUtils
-       ( assertForeignTrue
-       , withBrowser
-       , withBrowserPage
-       , testClickEvent
-       , cwd
-       , isNull
-       )
-where
+  ( assertForeignTrue
+  , withBrowser
+  , withBrowserPage
+  , testClickEvent
+  , cwd
+  , isNull
+  ) where
 
 import Test.Unit.Assert as Assert
 import Foreign (Foreign, readBoolean)
@@ -26,8 +25,8 @@ assertForeignTrue value = do
 withBrowser :: forall a. (Browser -> Aff a) -> Aff a
 withBrowser = withResource acquire release
   where
-    acquire = launch chromium {}
-    release = close
+  acquire = launch chromium {}
+  release = close
 
 withBrowserPage :: forall a. URL -> (Page -> Aff a) -> Aff a
 withBrowserPage url action = do

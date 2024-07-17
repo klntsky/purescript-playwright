@@ -13,14 +13,14 @@ import Foreign as Foreign
 import Node.Encoding as Encoding
 import Node.FS.Aff as FS
 import Node.Stream as Stream
-import Playwright
+import Playwright (Selector(..), URL(..), chromium, click, close, dblclick, evaluate, exposeBinding, isClosed, launch, mainFrame, name, screenshot, textContent, url, version, waitForFunction, waitForSelector, waitForTimeout)
 import Node.EventEmitter (on_)
 import Playwright.ConsoleMessage as ConsoleMessage
 import Playwright.Dialog as Dialog
 import Playwright.Download as Download
 import Playwright.Event (on)
 import Playwright.Event as Event
-import Prelude
+import Prelude (Unit, bind, discard, pure, void, (#), ($), (/=), (<$>), (<<<), (<>), (=<<), (==))
 import Test.Unit (suite, test)
 import Test.Unit.Assert as Assert
 import Test.Unit.Main (runTest)
@@ -34,8 +34,8 @@ static file =
 main :: Effect Unit
 main = runTest do
   let
-   hello = static "hello.html"
-   index = static "index.html"
+    hello = static "hello.html"
+    index = static "index.html"
   suite "browser" do
     test "launch, close" do
       browser <- launch chromium {}
@@ -98,8 +98,7 @@ main = runTest do
         ref <- liftEffect $ Ref.new Nothing
         frgnRef <- liftEffect $ Ref.new Nothing
         exposeBinding page "hi_ffi"
-          (
-            \({frame}) frgn -> do
+          ( \({ frame }) frgn -> do
               url <- liftEffect $ url frame
               liftEffect do
                 Console.log "hi"
@@ -111,8 +110,9 @@ main = runTest do
         mbUrl <- liftEffect $ Ref.read ref
         mbForeign <- liftEffect $ Ref.read frgnRef
         Assert.equal (Just hello) mbUrl
-        Assert.assert "exposeBinding is not able to accept an argument" $
-          pure (pure 12) == (runExcept <<< Foreign.readInt <$> mbForeign)
+        Assert.assert "exposeBinding is not able to accept an argument"
+          $ pure (pure 12)
+              == (runExcept <<< Foreign.readInt <$> mbForeign)
   suite "events" do
     test "console" do
       withBrowserPage hello

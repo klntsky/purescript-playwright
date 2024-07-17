@@ -1,12 +1,11 @@
 module Playwright.Mouse where
 
-import Effect.Aff
-import Playwright.Data
-import Playwright.Internal
-import Playwright.Options
-import Prelude
+import Effect.Aff (Aff)
+import Playwright.Data (Mouse)
+import Playwright.Internal (affCall)
+import Playwright.Options (MouseClickOptions, MouseDblClickOptions, MouseMoveOptions, MouseUpDownOptions)
+import Prelude (Unit)
 import Untagged.Castable (class Castable)
-import Untagged.Union
 
 click
   :: Mouse
@@ -26,7 +25,7 @@ dblclick = affCall "dblclick" \_ -> dblclick
 
 down
   :: forall o
-  .  Castable o MouseUpDownOptions
+   . Castable o MouseUpDownOptions
   => Mouse
   -> o
   -> Aff Unit
@@ -34,7 +33,7 @@ down = affCall "down" \_ -> down
 
 move
   :: forall o
-  .  Castable o MouseMoveOptions
+   . Castable o MouseMoveOptions
   => Mouse
   -> o
   -> Aff Unit
@@ -42,7 +41,7 @@ move = affCall "move" \_ -> move
 
 up
   :: forall o
-  .  Castable o MouseUpDownOptions
+   . Castable o MouseUpDownOptions
   => Mouse
   -> o
   -> Aff Unit

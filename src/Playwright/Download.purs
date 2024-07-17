@@ -1,13 +1,12 @@
 module Playwright.Download
-       ( createReadStream
-       , suggestedFilename
-       , saveAs
-       , path
-       , url
-       , failure
-       , delete
-       )
-where
+  ( createReadStream
+  , suggestedFilename
+  , saveAs
+  , path
+  , url
+  , failure
+  , delete
+  ) where
 
 import Control.Promise (Promise, toAffE)
 import Data.Maybe (Maybe(..))
